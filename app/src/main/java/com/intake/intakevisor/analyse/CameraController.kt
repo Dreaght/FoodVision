@@ -19,27 +19,29 @@ class CameraController(
     private lateinit var cameraCaptureSession: CameraCaptureSession
     private lateinit var cameraCaptureRequest: CaptureRequest
     private lateinit var cameraCharacteristics: CameraCharacteristics
-    private lateinit var surface: Surface // Use Surface here instead of SurfaceTexture
+    private lateinit var surface: Surface
     private val cameraManager: CameraManager = preview.context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private val handler: Handler = Handler(Looper.getMainLooper())
+    private var isCameraStarted = false
 
     private val textureListener = object : TextureView.SurfaceTextureListener {
         override fun onSurfaceTextureAvailable(surfaceTexture: SurfaceTexture, width: Int, height: Int) {
             surface = Surface(surfaceTexture) // Create Surface from SurfaceTexture
-            openCamera() // Open the camera after surface is available
+            if (isCameraStarted) {
+                openCamera()
+            }
         }
 
         override fun onSurfaceTextureSizeChanged(surfaceTexture: SurfaceTexture, width: Int, height: Int) {}
 
         override fun onSurfaceTextureDestroyed(surfaceTexture: SurfaceTexture): Boolean {
-            stop() // Stop the camera if surface is destroyed
+            stop() // Stop the camera if the surface is destroyed
             return true
         }
 
         override fun onSurfaceTextureUpdated(surfaceTexture: SurfaceTexture) {
-            // Here you can capture frames or pass data to the callback
-            val frame = Frame(surfaceTexture)  // Use surfaceTexture to create a Frame object
-            onFrameReceived(frame)  // Pass the frame to onFrameReceived
+            val frame = Frame(surfaceTexture) // Use surfaceTexture to create a Frame object
+            onFrameReceived(frame) // Pass the frame to onFrameReceived
         }
     }
 
@@ -68,7 +70,7 @@ class CameraController(
             cameraDevice = camera
             val surfaceTexture = preview.surfaceTexture
             surfaceTexture?.setDefaultBufferSize(preview.width, preview.height)
-            surface = Surface(surfaceTexture) // Use Surface here for preview
+            surface = Surface(surfaceTexture)
 
             val captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
             captureRequestBuilder.addTarget(surface)
@@ -77,7 +79,7 @@ class CameraController(
                 listOf(surface),
                 object : CameraCaptureSession.StateCallback() {
                     override fun onConfigured(session: CameraCaptureSession) {
-                        if (cameraDevice != null) {
+                        if (::cameraDevice.isInitialized) {
                             cameraCaptureSession = session
                             cameraCaptureRequest = captureRequestBuilder.build()
                             cameraCaptureSession.setRepeatingRequest(cameraCaptureRequest, null, handler)
@@ -102,6 +104,7 @@ class CameraController(
     }
 
     fun start() {
+        isCameraStarted = true
         if (preview.isAvailable) {
             openCamera()
         } else {
@@ -110,11 +113,24 @@ class CameraController(
     }
 
     fun stop() {
+        isCameraStarted = false
         try {
-            cameraCaptureSession.stopRepeating()
-            cameraDevice.close()
+            if (::cameraCaptureSession.isInitialized) {
+                cameraCaptureSession.stopRepeating()
+                cameraDevice.close()
+            }
         } catch (e: Exception) {
             Log.e("CameraController", "Error while stopping camera: ${e.message}")
+        }
+    }
+
+    fun pause() {
+        stop()
+    }
+
+    fun resume() {
+        if (!isCameraStarted) {
+            start()
         }
     }
 }
