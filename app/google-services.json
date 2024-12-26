@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "334831723168",
+    "project_id": "intakevisor",
+    "storage_bucket": "intakevisor.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:334831723168:android:154a3886fb37da85ecdfc5",
+        "android_client_info": {
+          "package_name": "com.intake.intakevisor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "334831723168-d22lkf9cakhkhaup8p886k7a3rpov8fm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.intake.intakevisor",
+            "certificate_hash": "5c33f04764b024bde95893ce9368081aa2aaa817"
+          }
+        },
+        {
+          "client_id": "334831723168-gfalfamutnup93mb6t34jugd7gg230t5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkhQW6Q2c-fl8RF8Z1NtQofokjk8oA9J8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "334831723168-gfalfamutnup93mb6t34jugd7gg230t5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
