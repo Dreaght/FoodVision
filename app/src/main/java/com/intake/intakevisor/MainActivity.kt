@@ -1,24 +1,32 @@
 package com.intake.intakevisor
 
+import android.content.ContentUris
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.TextureView
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import com.intake.intakevisor.analyse.CameraController
-import com.intake.intakevisor.analyse.FoodProcessor
-import com.intake.intakevisor.analyse.FoodRegion
-import com.intake.intakevisor.analyse.Frame
-import com.intake.intakevisor.analyse.NutritionInfo
+import com.bumptech.glide.Glide
+import com.intake.intakevisor.analyse.*
+import com.intake.intakevisor.analyse.camera.CameraController
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var cameraPreview: TextureView
     private lateinit var cameraController: CameraController
+    private lateinit var galleryPreview: ImageView // ImageView to show the last photo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         cameraPreview = findViewById(R.id.cameraPreview)
+        galleryPreview = findViewById(R.id.gallery_preview) // Find the ImageView
+
+        // Load the last photo from the gallery
+        loadLastPhotoIntoPreview()
+
         startCameraPreview()
     }
 
@@ -36,6 +44,34 @@ class MainActivity : AppCompatActivity() {
 
         // Start the camera preview
         cameraController.start()
+    }
+
+    private fun loadLastPhotoIntoPreview() {
+        val collection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val projection = arrayOf(MediaStore.Images.Media._ID)
+        val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
+
+        val cursor = contentResolver.query(collection, projection, null, null, sortOrder)
+
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val id = it.getLong(idColumn)
+
+                // Create URI for the last image
+                val lastPhotoUri: Uri =
+                    ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+
+                // Load the image into the gallery preview
+                Glide.with(this)
+                    .load(lastPhotoUri)
+                    .placeholder(R.drawable.transparent_square) // Transparent background if no image
+                    .into(galleryPreview)
+            } else {
+                // No photos available; load a transparent placeholder
+                galleryPreview.setImageResource(R.drawable.transparent_square)
+            }
+        }
     }
 
     private fun renderDetectedFoods(

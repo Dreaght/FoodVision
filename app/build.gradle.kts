@@ -12,7 +12,7 @@ android {
     defaultConfig {
         applicationId = "com.intake.intakevisor"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
@@ -66,4 +66,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.ui.auth)
+
+    implementation (libs.glide)
+    annotationProcessor (libs.compiler)
 }

@@ -83,13 +83,12 @@ class LoginActivity : AppCompatActivity() {
                     checkPermissionsAndProceed(user)
                 }
             } else {
-                // Handle case when user cancels the sign-in process or fails
                 if (response?.error?.errorCode == ErrorCodes.NO_NETWORK) {
                     Toast.makeText(this, "Check your internet connection and try again.", Toast.LENGTH_LONG).show()
-                    launchSignInFlow() // Restart sign-in if canceled or failed
+                    launchSignInFlow()
                 } else {
                     Toast.makeText(this, "Sign-in failed. Try again.", Toast.LENGTH_LONG).show()
-                    launchSignInFlow() // Restart sign-in if canceled or failed
+                    launchSignInFlow()
                 }
             }
         }
@@ -112,13 +111,14 @@ class LoginActivity : AppCompatActivity() {
 
     private fun arePermissionsGranted(): Boolean {
         val cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-        return cameraPermission == PackageManager.PERMISSION_GRANTED
+        val storagePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        return cameraPermission == PackageManager.PERMISSION_GRANTED && storagePermission == PackageManager.PERMISSION_GRANTED
     }
 
     private fun requestPermissions() {
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(Manifest.permission.CAMERA),
+            arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE),
             REQUEST_PERMISSIONS
         )
     }
@@ -145,13 +145,12 @@ class LoginActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == REQUEST_PERMISSIONS) {
-            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                // Proceed since all permissions are granted
+            val allPermissionsGranted = grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }
+            if (allPermissionsGranted) {
                 auth.currentUser?.let {
                     navigateToMainActivity(it)
                 }
             } else {
-                // Increment denial count
                 permissionDenialCount++
                 if (permissionDenialCount < 2) {
                     Toast.makeText(this, "Permissions denied. Please allow permissions.", Toast.LENGTH_LONG).show()

@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">IntakeVisor</string>
     <!-- Strings related to login -->
-    <string name="default_web_client_id">334831723168-gfalfamutnup93mb6t34jugd7gg230t5.apps.googleusercontent.com</string>
+    <string name="capture">Capture photo</string>
 </resources>
