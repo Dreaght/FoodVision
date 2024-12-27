@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.intake.intakevisor.analyse.*
 import com.intake.intakevisor.analyse.camera.CameraController
 
-class MainActivity : AppCompatActivity() {
+class CameraActivity : AppCompatActivity() {
 
     private lateinit var cameraPreview: TextureView
     private lateinit var cameraController: CameraController
@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_camera)
 
         cameraPreview = findViewById(R.id.cameraPreview)
         galleryPreview = findViewById(R.id.gallery_preview) // Find the ImageView

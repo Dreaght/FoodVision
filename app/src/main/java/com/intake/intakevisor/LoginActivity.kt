@@ -163,7 +163,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun navigateToMainActivity(user: FirebaseUser) {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, CameraActivity::class.java)
         startActivity(intent)
         finish()
     }
