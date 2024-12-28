@@ -168,6 +168,7 @@ class CameraActivity : AppCompatActivity() {
         regionRenderer.setRegions(detectedFoods)
 
         transparentOverlay.clearBitMap()
+        transparentOverlay.setBitmap(cameraController.getCurrentFrame()?.image as Bitmap? ?: return)
     }
 
     private fun handleCancelButton() {
@@ -260,5 +261,16 @@ class CameraActivity : AppCompatActivity() {
             transparentOverlay.layoutParams.height = height
             transparentOverlay.requestLayout() // Reapply layout
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        cameraController.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!captureMode)
+            cameraController.resume()
     }
 }
