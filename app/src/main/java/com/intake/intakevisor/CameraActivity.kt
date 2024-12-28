@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide
 import com.intake.intakevisor.analyse.FoodFragment
 import com.intake.intakevisor.analyse.FoodProcessor
 import com.intake.intakevisor.analyse.FoodRegion
+import com.intake.intakevisor.analyse.Frame
 import com.intake.intakevisor.analyse.camera.CameraController
 import com.intake.intakevisor.analyse.util.RegionRenderer
 import com.intake.intakevisor.analyse.widget.TransparentOverlayView
@@ -33,6 +34,10 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var confirmButton: Button
     private lateinit var regionRenderer: RegionRenderer
     private var foodProcessor: FoodProcessor? = null // Holds the processor state for the session
+
+    private val GALLERY_REQUEST_CODE = 1001
+
+    private var captureMode: Boolean = false
 
     // Meal type received from DiaryActivity
     private var mealType: String? = null
@@ -68,6 +73,9 @@ class CameraActivity : AppCompatActivity() {
         cancelButton.setOnClickListener { handleCancelButton() }
         confirmButton.setOnClickListener { handleConfirmButton() }
 
+        // Open the gallery photo chooser when gallery_preview is clicked
+        galleryPreview.setOnClickListener { openGallery() }
+
         transparentOverlay.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 val tappedRegion = detectTappedRegion(event.x, event.y)
@@ -76,16 +84,59 @@ class CameraActivity : AppCompatActivity() {
                     updateConfirmButtonState()
                 }
                 transparentOverlay.performClick() // Trigger performClick for accessibility
-                if (regionRenderer.hasSelectedRegions()) {
-                    confirmButton.visibility = View.VISIBLE
-                    cancelButton.visibility = View.GONE
-                } else {
-                    confirmButton.visibility = View.GONE
-                    cancelButton.visibility = View.VISIBLE
-                }
+                if (captureMode)
+                    if (regionRenderer.hasSelectedRegions()) {
+                        confirmButton.visibility = View.VISIBLE
+                        cancelButton.visibility = View.GONE
+                    } else {
+                        confirmButton.visibility = View.GONE
+                        cancelButton.visibility = View.VISIBLE
+                    }
             }
             true // Indicate the touch event was handled
         }
+    }
+
+    private fun openGallery() {
+        captureMode = true
+
+        cameraController.pause()
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, GALLERY_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            val imageUri: Uri = data.data ?: return
+
+            // Load the selected image into the gallery preview
+            Glide.with(this)
+                .load(imageUri)
+                .into(galleryPreview)
+
+            // Handle the image just like capturing a photo
+            handleImageSelection(imageUri)
+        }
+    }
+
+    private fun handleImageSelection(imageUri: Uri) {
+        // Here, we simulate the behavior of handleCaptureButton()
+        galleryPreview.visibility = View.GONE
+        captureButton.visibility = View.GONE
+        cancelButton.visibility = View.VISIBLE
+        confirmButton.visibility = View.GONE
+
+        // Process the image from the gallery (similar to how you'd process a captured image)
+        val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+        foodProcessor = FoodProcessor(Frame(bitmap))
+
+        val detectedFoods = foodProcessor?.detectFoods() ?: emptyList()
+        regionRenderer.setRegions(detectedFoods)
+
+        // Set the loaded image onto the transparentOverlay
+        transparentOverlay.setBitmap(bitmap)
     }
 
     private fun detectTappedRegion(x: Float, y: Float): FoodRegion? {
@@ -101,6 +152,9 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun handleCaptureButton() {
+
+        captureMode = true
+
         captureButton.visibility = View.GONE
         cancelButton.visibility = View.VISIBLE
         confirmButton.visibility = View.GONE
@@ -112,9 +166,14 @@ class CameraActivity : AppCompatActivity() {
 
         val detectedFoods = foodProcessor?.detectFoods() ?: emptyList()
         regionRenderer.setRegions(detectedFoods)
+
+        transparentOverlay.clearBitMap()
     }
 
     private fun handleCancelButton() {
+
+        captureMode = false
+
         captureButton.visibility = View.VISIBLE
         cancelButton.visibility = View.GONE
         confirmButton.visibility = View.GONE
@@ -122,6 +181,7 @@ class CameraActivity : AppCompatActivity() {
 
         cameraController.resume()
         regionRenderer.clearRegions()
+        transparentOverlay.clearBitMap()
         foodProcessor = null // Clear the processor state
     }
 
