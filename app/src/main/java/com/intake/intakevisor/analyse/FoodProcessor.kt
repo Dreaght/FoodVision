@@ -1,7 +1,7 @@
 package com.intake.intakevisor.analyse
 
-class FoodProcessor : FoodDetector, NutritionAnalyzer {
-    override fun detectFoodRegions(frame: Frame): List<FoodRegion> {
+class FoodProcessor(frame: Frame) : FoodDetector, NutritionAnalyzer {
+    override fun detectFoodRegions(): List<FoodRegion> {
         // TODO: Implement food region detection using OpenCV
         return emptyList()
     }

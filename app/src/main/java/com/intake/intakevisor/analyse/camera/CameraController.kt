@@ -7,6 +7,9 @@ import android.view.Surface
 import android.view.TextureView
 import android.hardware.camera2.*
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Matrix
 import android.media.MediaRecorder
 import android.util.Log
 import android.os.Handler
@@ -153,4 +156,21 @@ class CameraController(
             handler
         )
     }
+
+    fun getCurrentFrame(): Frame? {
+        val surfaceTexture = preview.surfaceTexture ?: return null
+        val bitmap = Bitmap.createBitmap(preview.width, preview.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val matrix = Matrix()
+
+        // Adjust the matrix to properly map the texture to the bitmap
+        matrix.setScale(1f, -1f) // Flip vertically to match the camera's orientation
+        matrix.postTranslate(0f, preview.height.toFloat())
+
+        canvas.setMatrix(matrix)
+        preview.draw(canvas)
+
+        return Frame(bitmap)
+    }
+
 }

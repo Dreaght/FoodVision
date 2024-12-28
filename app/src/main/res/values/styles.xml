@@ -6,6 +6,16 @@
         <item name="android:elevation">4dp</item>
     </style>
 
+    <style name="CancelButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/cancel_button_background</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+    <style name="ConfirmButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/confirm_button_background</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
     <!-- Gallery Button Style -->
     <style name="GalleryButton" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/gallery_button_background</item>

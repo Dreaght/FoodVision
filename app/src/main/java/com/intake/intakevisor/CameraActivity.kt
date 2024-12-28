@@ -4,45 +4,97 @@ import android.content.ContentUris
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.KeyEvent
 import android.view.TextureView
+import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.intake.intakevisor.analyse.*
 import com.intake.intakevisor.analyse.camera.CameraController
+import com.intake.intakevisor.analyse.util.RegionRenderer
+import com.intake.intakevisor.analyse.widget.TransparentOverlayView
 
 class CameraActivity : AppCompatActivity() {
 
     private lateinit var cameraPreview: TextureView
+    private lateinit var transparentOverlay: TransparentOverlayView
     private lateinit var cameraController: CameraController
-    private lateinit var galleryPreview: ImageView // ImageView to show the last photo
+    private lateinit var galleryPreview: ImageView
+    private lateinit var captureButton: Button
+    private lateinit var cancelButton: Button
+    private lateinit var confirmButton: Button
+    private lateinit var regionRenderer: RegionRenderer
+    private var foodProcessor: FoodProcessor? = null // Holds the processor state for the session
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
 
         cameraPreview = findViewById(R.id.cameraPreview)
-        galleryPreview = findViewById(R.id.gallery_preview) // Find the ImageView
+        transparentOverlay = findViewById(R.id.transparent_overlay)
+        galleryPreview = findViewById(R.id.gallery_preview)
+        captureButton = findViewById(R.id.capture_button)
+        cancelButton = findViewById(R.id.cancel_button)
+        confirmButton = findViewById(R.id.confirm_button)
 
-        // Load the last photo from the gallery
+        regionRenderer = RegionRenderer(transparentOverlay) // Pass the preview as the render view
+
+        setupUI()
         loadLastPhotoIntoPreview()
-
         startCameraPreview()
     }
 
-    private fun startCameraPreview() {
-        // Initialize and configure the camera here
-        val foodProcessor = FoodProcessor()
-
-        // Initialize the CameraController
-        cameraController = CameraController(cameraPreview) { currentFrame ->
-            currentFrame?.let { frame ->
-                val detectedFoods = foodProcessor.detectFoodRegions(frame)
-                renderDetectedFoods(frame, detectedFoods, foodProcessor)
-            }
+    private fun setupUI() {
+        captureButton.setOnClickListener { handleCaptureButton() }
+        cancelButton.setOnClickListener { handleCancelButton() }
+        confirmButton.setOnClickListener {
+            // Logic for confirming the selection
         }
 
-        // Start the camera preview
+        // Initial button visibility
+        confirmButton.visibility = View.GONE
+        cancelButton.visibility = View.GONE
+    }
+
+    private fun handleCaptureButton() {
+        captureButton.visibility = View.GONE
+        cancelButton.visibility = View.VISIBLE
+        confirmButton.visibility = View.GONE
+        galleryPreview.visibility = View.GONE
+
+        cameraController.pause()
+        val frame = cameraController.getCurrentFrame() ?: return
+        foodProcessor = FoodProcessor(frame)
+
+        val detectedFoods = foodProcessor?.detectFoodRegions() ?: emptyList()
+        regionRenderer.setRegions(detectedFoods)
+    }
+
+    private fun handleCancelButton() {
+        captureButton.visibility = View.VISIBLE
+        cancelButton.visibility = View.GONE
+        confirmButton.visibility = View.GONE
+        galleryPreview.visibility = View.VISIBLE
+
+        cameraController.resume()
+        regionRenderer.clearRegions()
+        foodProcessor = null // Clear the processor state
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            handleCancelButton()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    private fun startCameraPreview() {
+        cameraController = CameraController(cameraPreview) { currentFrame ->
+            // Frame processing for the preview
+        }
         cameraController.start()
     }
 
@@ -58,49 +110,16 @@ class CameraActivity : AppCompatActivity() {
                 val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
                 val id = it.getLong(idColumn)
 
-                // Create URI for the last image
                 val lastPhotoUri: Uri =
                     ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
 
-                // Load the image into the gallery preview
                 Glide.with(this)
                     .load(lastPhotoUri)
-                    .placeholder(R.drawable.transparent_square) // Transparent background if no image
+                    .placeholder(R.drawable.transparent_square)
                     .into(galleryPreview)
             } else {
-                // No photos available; load a transparent placeholder
                 galleryPreview.setImageResource(R.drawable.transparent_square)
             }
         }
-    }
-
-    private fun renderDetectedFoods(
-        frame: Frame,
-        detectedFoods: List<FoodRegion>,
-        foodProcessor: FoodProcessor
-    ) {
-        detectedFoods.forEach { region ->
-            val nutritionInfo = foodProcessor.analyze(region)
-            drawBoundingBox(region)
-            drawNutritionInfo(region, nutritionInfo)
-        }
-    }
-
-    private fun drawBoundingBox(region: FoodRegion) {
-        // Use OpenCV or another method to draw a rectangle on the preview
-    }
-
-    private fun drawNutritionInfo(region: FoodRegion, info: NutritionInfo) {
-        // Draw text near the bounding box, ensure it's within screen bounds
-    }
-
-    override fun onResume() {
-        super.onResume()
-        cameraController.resume() // Resume camera when the app comes back to the foreground
-    }
-
-    override fun onPause() {
-        super.onPause()
-        cameraController.pause() // Pause camera when the app goes into the background
     }
 }
