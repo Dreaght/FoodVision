@@ -21,6 +21,12 @@ class TransparentOverlayView @JvmOverloads constructor(
         isAntiAlias = true
     }
 
+    private val textPaint = Paint().apply {
+        color = 0xFCFCFCFC.toInt() // Black color for text
+        textSize = 36f // Set a readable text size
+        isAntiAlias = true
+    }
+
     private val regionsToDraw = mutableListOf<Pair<FoodRegion, Boolean>>() // FoodRegion and isSelected
     private val rect = RectF() // Preallocated RectF object to reuse
 
@@ -34,7 +40,7 @@ class TransparentOverlayView @JvmOverloads constructor(
         super.onDraw(canvas)
 
         regionsToDraw.forEach { (region, isSelected) ->
-            paint.color = if (isSelected) 0xFF00FF00.toInt() else 0xFCFCFCFC.toInt() // Green or Gray
+            paint.color = if (isSelected) 0xFF00FF00.toInt() else 0xFCFCFCFC.toInt() // Green or White
 
             // Reuse the preallocated RectF and set its values
             rect.set(
@@ -44,6 +50,13 @@ class TransparentOverlayView @JvmOverloads constructor(
                 region.bounds.bottom.toFloat()
             )
             canvas.drawRect(rect, paint)
+
+            // Draw text near the rectangle (below it)
+            val nutritionInfo = region.nutritionInfo
+            val text = "${nutritionInfo.name} ${nutritionInfo.calories} ${nutritionInfo.nutrients}"
+            val x = region.bounds.left.toFloat()
+            val y = region.bounds.bottom + 40f // Slightly below the rectangle
+            canvas.drawText(text, x, y, textPaint)
         }
     }
 

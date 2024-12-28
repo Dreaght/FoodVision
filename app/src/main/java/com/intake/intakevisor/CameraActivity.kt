@@ -1,6 +1,8 @@
 package com.intake.intakevisor
 
 import android.content.ContentUris
+import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -16,6 +18,7 @@ import com.intake.intakevisor.analyse.*
 import com.intake.intakevisor.analyse.camera.CameraController
 import com.intake.intakevisor.analyse.util.RegionRenderer
 import com.intake.intakevisor.analyse.widget.TransparentOverlayView
+import java.io.ByteArrayOutputStream
 
 class CameraActivity : AppCompatActivity() {
 
@@ -55,12 +58,7 @@ class CameraActivity : AppCompatActivity() {
     private fun setupUI() {
         captureButton.setOnClickListener { handleCaptureButton() }
         cancelButton.setOnClickListener { handleCancelButton() }
-        confirmButton.setOnClickListener {
-            if (regionRenderer.hasSelectedRegions()) {
-                val selectedRegions = regionRenderer.getSelectedRegions()
-                // Handle selected regions here (e.g., process or save them)
-            }
-        }
+        confirmButton.setOnClickListener { handleConfirmButton() }
 
         transparentOverlay.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
@@ -104,7 +102,7 @@ class CameraActivity : AppCompatActivity() {
         val frame = cameraController.getCurrentFrame() ?: return
         foodProcessor = FoodProcessor(frame)
 
-        val detectedFoods = foodProcessor?.detectFoodRegions() ?: emptyList()
+        val detectedFoods = foodProcessor?.detectFoods() ?: emptyList()
         regionRenderer.setRegions(detectedFoods)
     }
 
@@ -117,6 +115,24 @@ class CameraActivity : AppCompatActivity() {
         cameraController.resume()
         regionRenderer.clearRegions()
         foodProcessor = null // Clear the processor state
+    }
+
+    private fun handleConfirmButton() {
+        if (regionRenderer.hasSelectedRegions()) {
+            val selectedRegions = regionRenderer.getSelectedRegions()
+            val fragments = ArrayList<ByteArray>() // Create a list to store fragments as byte arrays
+
+            for (region in selectedRegions) {
+                val stream = ByteArrayOutputStream()
+                region.fragment.compress(Bitmap.CompressFormat.PNG, 100, stream) // Compress the bitmap
+                fragments.add(stream.toByteArray()) // Add compressed bitmap as a byte array
+            }
+
+            // Create an intent to start DiaryActivity
+            val intent = Intent(this, DiaryActivity::class.java)
+            intent.putExtra("food_fragments", fragments) // Pass the fragments as an extra
+            startActivity(intent) // Start the DiaryActivity
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

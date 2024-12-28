@@ -1,19 +1,32 @@
 package com.intake.intakevisor.analyse
 
+import android.graphics.Bitmap
 import android.graphics.Rect
 
-class FoodProcessor(frame: Frame) : FoodDetector, NutritionAnalyzer {
-    override fun detectFoodRegions(): List<FoodRegion> {
-        // TODO: Implement food region detection using OpenCV
-        return listOf(
-            FoodRegion(Rect(100, 100, 300, 300)),
-            FoodRegion(Rect(500, 500, 800, 800)),
-            FoodRegion(Rect(300, 1000, 600, 1300))
+class FoodProcessor(val frame: Frame) : FoodDetector {
+    override fun detectFoods(): List<FoodRegion> {
+        val regions = listOf(
+            Rect(100, 100, 300, 300),
+            Rect(500, 500, 800, 800),
+            Rect(300, 1000, 600, 1300)
         )
+
+        // Extract fragments from the frame based on the regions
+        val foodRegions = regions.map { rect ->
+            val fragment = cropBitmap(frame.image as Bitmap, rect)
+            FoodRegion(rect, fragment, NutritionInfo("Sample Food", 100, 50))
+        }
+
+        return foodRegions
     }
 
-    override fun analyze(foodRegion: FoodRegion): NutritionInfo {
-        // TODO: Implement nutrition analysis (e.g., querying GPT)
-        return NutritionInfo("", 0, 0)
+    private fun cropBitmap(source: Bitmap, rect: Rect): Bitmap {
+        return Bitmap.createBitmap(
+            source,
+            rect.left,
+            rect.top,
+            rect.width(),
+            rect.height()
+        )
     }
 }

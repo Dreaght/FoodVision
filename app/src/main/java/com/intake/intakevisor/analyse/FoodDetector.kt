@@ -1,5 +1,5 @@
 package com.intake.intakevisor.analyse
 
 interface FoodDetector {
-    fun detectFoodRegions(): List<FoodRegion>
+    fun detectFoods(): List<FoodRegion>
 }
