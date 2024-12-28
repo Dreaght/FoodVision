@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.TextureView
 import android.view.View
 import android.widget.Button
@@ -44,18 +45,53 @@ class CameraActivity : AppCompatActivity() {
         setupUI()
         loadLastPhotoIntoPreview()
         startCameraPreview()
+
+        cameraPreview.viewTreeObserver.addOnPreDrawListener {
+            updateOverlaySize()
+            true // Continue drawing
+        }
     }
 
     private fun setupUI() {
         captureButton.setOnClickListener { handleCaptureButton() }
         cancelButton.setOnClickListener { handleCancelButton() }
         confirmButton.setOnClickListener {
-            // Logic for confirming the selection
+            if (regionRenderer.hasSelectedRegions()) {
+                val selectedRegions = regionRenderer.getSelectedRegions()
+                // Handle selected regions here (e.g., process or save them)
+            }
         }
 
-        // Initial button visibility
-        confirmButton.visibility = View.GONE
-        cancelButton.visibility = View.GONE
+        transparentOverlay.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val tappedRegion = detectTappedRegion(event.x, event.y)
+                tappedRegion?.let {
+                    regionRenderer.toggleRegionSelection(it)
+                    updateConfirmButtonState()
+                }
+                transparentOverlay.performClick() // Trigger performClick for accessibility
+                if (regionRenderer.hasSelectedRegions()) {
+                    confirmButton.visibility = View.VISIBLE
+                    cancelButton.visibility = View.GONE
+                } else {
+                    confirmButton.visibility = View.GONE
+                    cancelButton.visibility = View.VISIBLE
+                }
+            }
+            true // Indicate the touch event was handled
+        }
+    }
+
+    private fun detectTappedRegion(x: Float, y: Float): FoodRegion? {
+        // Determine if the tapped coordinates match any region
+        return regionRenderer.getDetectedRegions().firstOrNull { region ->
+            region.bounds.contains(x.toInt(), y.toInt())
+        }
+    }
+
+    private fun updateConfirmButtonState() {
+        confirmButton.visibility =
+            if (regionRenderer.hasSelectedRegions()) View.VISIBLE else View.GONE
     }
 
     private fun handleCaptureButton() {
@@ -120,6 +156,17 @@ class CameraActivity : AppCompatActivity() {
             } else {
                 galleryPreview.setImageResource(R.drawable.transparent_square)
             }
+        }
+    }
+
+    private fun updateOverlaySize() {
+        val width = cameraPreview.width
+        val height = cameraPreview.height
+
+        if (transparentOverlay.width != width || transparentOverlay.height != height) {
+            transparentOverlay.layoutParams.width = width
+            transparentOverlay.layoutParams.height = height
+            transparentOverlay.requestLayout() // Reapply layout
         }
     }
 }

@@ -41,4 +41,6 @@ class RegionRenderer(private val overlayView: TransparentOverlayView) {
     fun hasSelectedRegions(): Boolean = selectedRegions.isNotEmpty()
 
     fun getSelectedRegions(): List<FoodRegion> = selectedRegions.toList()
+
+    fun getDetectedRegions(): List<FoodRegion> = detectedRegions.toList()
 }

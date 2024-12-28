@@ -13,29 +13,21 @@
         </shape>
     </item>
     <item>
-        <rotate
-            android:fromDegrees="45"
-            android:pivotX="50%"
-            android:pivotY="50%">
-            <shape
-                android:shape="line">
-                <stroke
-                    android:width="5dp"
-                    android:color="#FFFFFF" />
-            </shape>
-        </rotate>
-    </item>
-    <item>
-        <rotate
-            android:fromDegrees="135"
-            android:pivotX="50%"
-            android:pivotY="50%">
-            <shape
-                android:shape="line">
-                <stroke
-                    android:width="5dp"
-                    android:color="#FFFFFF" />
-            </shape>
-        </rotate>
+        <vector
+            android:width="80dp"
+            android:height="80dp"
+            android:viewportWidth="80"
+            android:viewportHeight="80">
+            <!-- First diagonal line (top-left to bottom-right) -->
+            <path
+                android:strokeWidth="5"
+                android:strokeColor="#FFFFFF"
+                android:pathData="M20,20 L60,60" />
+            <!-- Second diagonal line (top-right to bottom-left) -->
+            <path
+                android:strokeWidth="5"
+                android:strokeColor="#FFFFFF"
+                android:pathData="M60,20 L20,60" />
+        </vector>
     </item>
 </layer-list>

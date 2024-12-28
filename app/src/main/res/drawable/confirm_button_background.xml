@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background circle -->
     <item>
         <shape>
             <size
@@ -12,36 +13,16 @@
                 android:color="#FFFFFF" />
         </shape>
     </item>
-    <item>
-        <rotate
-            android:fromDegrees="45"
-            android:pivotX="50%"
-            android:pivotY="50%">
-            <shape
-                android:shape="line">
-                <stroke
-                    android:width="5dp"
-                    android:color="#FFFFFF" />
-                <size
-                    android:width="20dp"
-                    android:height="50dp" />
-            </shape>
-        </rotate>
-    </item>
-    <item>
-        <rotate
-            android:fromDegrees="-45"
-            android:pivotX="30%"
-            android:pivotY="75%">
-            <shape
-                android:shape="line">
-                <stroke
-                    android:width="5dp"
-                    android:color="#FFFFFF" />
-                <size
-                    android:width="30dp"
-                    android:height="20dp" />
-            </shape>
-        </rotate>
+    <!-- Checkmark -->
+    <item android:right="5dp" android:left="5dp" android:top="5dp" android:bottom="5dp">
+        <vector
+            android:width="70dp"
+            android:height="70dp"
+            android:viewportWidth="24"
+            android:viewportHeight="24">
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M9,19L4,14L5.41,12.59L9,16.17L19,6.17L20.41,7.58L9,19Z" />
+        </vector>
     </item>
 </layer-list>

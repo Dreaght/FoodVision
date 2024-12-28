@@ -1,5 +1,6 @@
 package com.intake.intakevisor.analyse.widget
 
+import android.R
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -23,11 +24,17 @@ class TransparentOverlayView @JvmOverloads constructor(
     private val regionsToDraw = mutableListOf<Pair<FoodRegion, Boolean>>() // FoodRegion and isSelected
     private val rect = RectF() // Preallocated RectF object to reuse
 
+    override fun performClick(): Boolean {
+        super.performClick() // Call the superclass implementation
+        // Additional logic (if needed) can go here
+        return true
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         regionsToDraw.forEach { (region, isSelected) ->
-            paint.color = if (isSelected) 0xFF00FF00.toInt() else 0x80808080.toInt() // Green or Gray
+            paint.color = if (isSelected) 0xFF00FF00.toInt() else 0xFCFCFCFC.toInt() // Green or Gray
 
             // Reuse the preallocated RectF and set its values
             rect.set(
