@@ -14,7 +14,9 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.intake.intakevisor.analyse.*
+import com.intake.intakevisor.analyse.FoodFragment
+import com.intake.intakevisor.analyse.FoodProcessor
+import com.intake.intakevisor.analyse.FoodRegion
 import com.intake.intakevisor.analyse.camera.CameraController
 import com.intake.intakevisor.analyse.util.RegionRenderer
 import com.intake.intakevisor.analyse.widget.TransparentOverlayView
@@ -32,9 +34,15 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var regionRenderer: RegionRenderer
     private var foodProcessor: FoodProcessor? = null // Holds the processor state for the session
 
+    // Meal type received from DiaryActivity
+    private var mealType: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
+
+        // Get the meal type passed from DiaryActivity
+        mealType = intent.getStringExtra("meal_type")
 
         cameraPreview = findViewById(R.id.cameraPreview)
         transparentOverlay = findViewById(R.id.transparent_overlay)
@@ -132,8 +140,10 @@ class CameraActivity : AppCompatActivity() {
                 foodFragments.add(FoodFragment(image = imageBytes, nutritionInfo = nutritionInfo))
             }
 
+            // Pass food fragments and meal type to DiaryActivity
             val intent = Intent(this, DiaryActivity::class.java)
             intent.putParcelableArrayListExtra("food_fragments", foodFragments)
+            intent.putExtra("meal_type", mealType)  // Pass meal type to DiaryActivity
             startActivity(intent)
         }
     }

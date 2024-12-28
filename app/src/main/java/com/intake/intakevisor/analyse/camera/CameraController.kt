@@ -15,6 +15,7 @@ import android.util.Log
 import android.os.Handler
 import android.os.Looper
 import com.intake.intakevisor.analyse.Frame
+import java.nio.ByteBuffer
 
 class CameraController(
     private val preview: TextureView,
@@ -158,19 +159,6 @@ class CameraController(
     }
 
     fun getCurrentFrame(): Frame? {
-        val surfaceTexture = preview.surfaceTexture ?: return null
-        val bitmap = Bitmap.createBitmap(preview.width, preview.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        val matrix = Matrix()
-
-        // Adjust the matrix to properly map the texture to the bitmap
-        matrix.setScale(1f, -1f) // Flip vertically to match the camera's orientation
-        matrix.postTranslate(0f, preview.height.toFloat())
-
-        canvas.setMatrix(matrix)
-        preview.draw(canvas)
-
-        return Frame(bitmap)
+        return Frame(preview.bitmap as Bitmap)
     }
-
 }

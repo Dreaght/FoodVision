@@ -3,4 +3,12 @@
     <!-- Strings related to login -->
     <string name="capture">Capture photo</string>
     <string name="gallery_preview">Gallery preview</string>
+    <string name="currentDay">Today</string>
+    <string name="previous_day_label">&lt;</string>
+    <string name="next_day_label">&gt;</string>
+    <string name="breakfast">Breakfast</string>
+    <string name="lunch">Lunch</string>
+    <string name="dinner">Dinner</string>
+    <string name="addFood">ADD FOOD +</string>
+    <string name="food_icon">Food Icon</string>
 </resources>
