@@ -120,18 +120,21 @@ class CameraActivity : AppCompatActivity() {
     private fun handleConfirmButton() {
         if (regionRenderer.hasSelectedRegions()) {
             val selectedRegions = regionRenderer.getSelectedRegions()
-            val fragments = ArrayList<ByteArray>() // Create a list to store fragments as byte arrays
+            val foodFragments = ArrayList<FoodFragment>()
 
             for (region in selectedRegions) {
+                val nutritionInfo = region.nutritionInfo
+
                 val stream = ByteArrayOutputStream()
-                region.fragment.compress(Bitmap.CompressFormat.PNG, 100, stream) // Compress the bitmap
-                fragments.add(stream.toByteArray()) // Add compressed bitmap as a byte array
+                region.fragment.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                val imageBytes = stream.toByteArray()
+
+                foodFragments.add(FoodFragment(image = imageBytes, nutritionInfo = nutritionInfo))
             }
 
-            // Create an intent to start DiaryActivity
             val intent = Intent(this, DiaryActivity::class.java)
-            intent.putExtra("food_fragments", fragments) // Pass the fragments as an extra
-            startActivity(intent) // Start the DiaryActivity
+            intent.putParcelableArrayListExtra("food_fragments", foodFragments)
+            startActivity(intent)
         }
     }
 
