@@ -221,7 +221,7 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun startCameraPreview() {
-        cameraController = CameraController(cameraPreview) { currentFrame ->
+        cameraController = CameraController(this.applicationContext, cameraPreview) { currentFrame ->
             // Frame processing for the preview
         }
         cameraController.start()

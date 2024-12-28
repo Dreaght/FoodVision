@@ -8,16 +8,14 @@ import android.view.TextureView
 import android.hardware.camera2.*
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Matrix
 import android.media.MediaRecorder
 import android.util.Log
 import android.os.Handler
 import android.os.Looper
 import com.intake.intakevisor.analyse.Frame
-import java.nio.ByteBuffer
 
 class CameraController(
+    private val context: Context,
     private val preview: TextureView,
     val onFrameReceived: (Frame?) -> Unit
 ) {
@@ -37,7 +35,7 @@ class CameraController(
     private val previewSizeManager = PreviewSizeManager()
 
     init {
-        preview.surfaceTextureListener = TextureViewListener(this)
+        preview.surfaceTextureListener = TextureViewListener(context, this)
     }
 
     @SuppressLint("MissingPermission")
