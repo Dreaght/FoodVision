@@ -210,7 +210,10 @@ class CameraActivity : AppCompatActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            handleCancelButton()
+            if (captureMode)
+                handleCancelButton()
+            else
+                return super.onKeyDown(keyCode, event)
             return true
         }
         return super.onKeyDown(keyCode, event)
