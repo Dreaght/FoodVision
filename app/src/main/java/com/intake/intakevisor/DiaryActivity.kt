@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,7 @@ import com.intake.intakevisor.api.LocalDiaryDatabase
 import com.intake.intakevisor.api.LocalDiaryDatabaseImpl
 import com.intake.intakevisor.diary.FoodItem
 import com.intake.intakevisor.diary.FoodItemAdapter
+import com.intake.intakevisor.ui.MenuHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -27,7 +29,7 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DiaryActivity : AppCompatActivity() {
+class DiaryActivity : BaseActivity() {
 
     private lateinit var localDiaryDatabase: DiaryDatabase
 
