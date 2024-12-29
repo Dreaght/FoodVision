@@ -70,7 +70,7 @@ class TransparentOverlayView @JvmOverloads constructor(
 
             // Draw text near the rectangle (below it)
             val nutritionInfo = region.nutritionInfo
-            val text = "${nutritionInfo.name} ${nutritionInfo.calories} ${nutritionInfo.nutrients}"
+            val text = "${nutritionInfo.name} ${nutritionInfo.calories}"
             val x = region.bounds.left.toFloat()
             val y = region.bounds.bottom + 40f // Slightly below the rectangle
             canvas.drawText(text, x, y, textPaint)

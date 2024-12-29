@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.TextureView
@@ -41,6 +42,8 @@ class CameraActivity : AppCompatActivity() {
 
     // Meal type received from DiaryActivity
     private var mealType: String? = null
+    private var selectedDate: String? = null
+    private var sessionId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +51,10 @@ class CameraActivity : AppCompatActivity() {
 
         // Get the meal type passed from DiaryActivity
         mealType = intent.getStringExtra("meal_type")
+        selectedDate = intent.getStringExtra("selected_date")
+        sessionId = intent.getStringExtra("session_id")
+
+        Log.d("CameraActivity", "received selected date: $mealType $selectedDate")
 
         cameraPreview = findViewById(R.id.cameraPreview)
         transparentOverlay = findViewById(R.id.transparent_overlay)
@@ -205,6 +212,8 @@ class CameraActivity : AppCompatActivity() {
             val intent = Intent(this, DiaryActivity::class.java)
             intent.putParcelableArrayListExtra("food_fragments", foodFragments)
             intent.putExtra("meal_type", mealType)  // Pass meal type to DiaryActivity
+            intent.putExtra("selected_date", selectedDate)
+            intent.putExtra("session_id", sessionId)
             startActivity(intent)
         }
     }

@@ -11,4 +11,6 @@
     <string name="dinner">Dinner</string>
     <string name="addFood">ADD FOOD +</string>
     <string name="food_icon">Food Icon</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
 </resources>

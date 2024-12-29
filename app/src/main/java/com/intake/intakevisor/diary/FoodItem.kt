@@ -29,4 +29,17 @@ data class FoodItem(val name: String, val image: Bitmap) : Parcelable {
             return arrayOfNulls(size)
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as FoodItem
+        return name == other.name && image.sameAs(other.image)
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + image.hashCode()
+        return result
+    }
 }

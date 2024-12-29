@@ -28,7 +28,6 @@ class CameraController(
 
     var isCameraStarted = false
     private var previewSize: Size? = null
-    private var cameraId: String? = null
     var initialViewWidth: Int? = null
     var initialViewHeight: Int? = null
 

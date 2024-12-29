@@ -14,7 +14,7 @@ class FoodProcessor(val frame: Frame) : FoodDetector {
         // Extract fragments from the frame based on the regions
         val foodRegions = regions.map { rect ->
             val fragment = cropBitmap(frame.image as Bitmap, rect)
-            FoodRegion(rect, fragment, NutritionInfo("Sample Food", 100, 50))
+            FoodRegion(rect, fragment, NutritionInfo("Sample Food", 100))
         }
 
         return foodRegions
