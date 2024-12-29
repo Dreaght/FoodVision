@@ -262,9 +262,15 @@ class DiaryActivity : AppCompatActivity() {
     private fun saveFoodFragmentToDatabase(
         selectedDate: String, mealType: String, foodFragment: FoodFragment) {
         CoroutineScope(Dispatchers.IO).launch {
+            // Insert food fragment into the database
             localDiaryDatabase.insertFoodFragment(
                 selectedDate, mealType, convertFoodFragmentToFragmentEntity(
                     selectedDate, mealType, foodFragment))
+
+            // Once insertion is done, update the UI
+            withContext(Dispatchers.Main) {
+                refreshFoodData()
+            }
         }
     }
 
@@ -272,9 +278,15 @@ class DiaryActivity : AppCompatActivity() {
         selectedDate: String, mealType: String, foodFragment: FoodFragment)
     {
         CoroutineScope(Dispatchers.IO).launch {
+            // Delete food fragment from the database
             localDiaryDatabase.deleteFoodFragment(
                 selectedDate, mealType, convertFoodFragmentToFragmentEntity(
                     selectedDate, mealType, foodFragment))
+
+            // Once deletion is done, update the UI
+            withContext(Dispatchers.Main) {
+                refreshFoodData()
+            }
         }
     }
 
