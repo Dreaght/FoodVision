@@ -9,16 +9,6 @@ import com.intake.intakevisor.ui.MenuHelper
 
 open class BaseActivity : AppCompatActivity() {
 
-    override fun onContentChanged() {
-        super.onContentChanged()
-
-        // Automatically initialize the menu for all activities that extend BaseActivity
-        val menuPanel = findViewById<View>(R.id.menuPanel)
-        if (menuPanel != null) {
-            MenuHelper(this).setupMenu(menuPanel)
-        }
-    }
-
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun startActivity(intent: Intent) {
         super.startActivity(intent)

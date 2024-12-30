@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DiaryActivity : BaseActivity() {
+class DiaryActivity : BaseMenuActivity() {
 
     private lateinit var localDiaryDatabase: DiaryDatabase
 

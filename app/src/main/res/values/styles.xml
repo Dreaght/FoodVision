@@ -16,6 +16,21 @@
         <item name="android:elevation">4dp</item>
     </style>
 
+    <style name="BlackConfirmButton" parent="Widget.AppCompat.Button">
+            <item name="android:background">@drawable/black_confirm_button_background</item>
+            <item name="android:elevation">4dp</item>
+    </style>
+
+    <style name="BackButton" parent="Widget.AppCompat.Button">
+                <item name="android:background">@drawable/back_arrow</item>
+                <item name="android:elevation">4dp</item>
+    </style>
+
+    <style name="NextButton" parent="Widget.AppCompat.Button">
+            <item name="android:background">@drawable/next_arrow</item>
+            <item name="android:elevation">4dp</item>
+    </style>
+
     <!-- Gallery Button Style -->
     <style name="GalleryButton" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/gallery_button_background</item>

@@ -3,6 +3,7 @@ package com.intake.intakevisor
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
@@ -25,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         auth = FirebaseAuth.getInstance()
 
         // Reset permission denial count if the app was restarted
@@ -111,14 +113,24 @@ class LoginActivity : AppCompatActivity() {
 
     private fun arePermissionsGranted(): Boolean {
         val cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-        val storagePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val storagePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
+        } else {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
         return cameraPermission == PackageManager.PERMISSION_GRANTED && storagePermission == PackageManager.PERMISSION_GRANTED
     }
 
     private fun requestPermissions() {
+        val permissions = mutableListOf(Manifest.permission.CAMERA)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.READ_MEDIA_IMAGES)
+        } else {
+            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE),
+            permissions.toTypedArray(),
             REQUEST_PERMISSIONS
         )
     }
@@ -163,6 +175,17 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun navigateToMainActivity(user: FirebaseUser) {
+        val preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
+        val isFirstRun = preferences.getBoolean("isFirstRun", true)
+
+        if (isFirstRun) {
+            startActivity(Intent(this, WelcomeActivity::class.java))
+
+            // Finish LoginActivity to prevent stacking
+            finish()
+            return
+        }
+
         val intent = Intent(this, DiaryActivity::class.java)
         startActivity(intent)
         finish()

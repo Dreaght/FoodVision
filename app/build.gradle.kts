@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "com.intake.intakevisor"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -88,4 +88,6 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     implementation(libs.gson)
+
+    implementation(libs.androidx.core.splashscreen)
 }

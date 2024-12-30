@@ -13,4 +13,9 @@
     <string name="food_icon">Food Icon</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
+    <string name="welcome_title">Let\'s see how\n you are</string>
+    <string name="welcome_done_btn">Done</string>
+    <string name="ageTitle">Age: %1$d</string>
+    <string name="heightTitle">Height: %1$d</string>
+    <string name="weightTitle">Weight: %1$d</string>
 </resources>
