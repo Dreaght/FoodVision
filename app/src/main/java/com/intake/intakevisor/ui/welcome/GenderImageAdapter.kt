@@ -1,4 +1,4 @@
-package com.intake.intakevisor.welcome
+package com.intake.intakevisor.ui.welcome
 
 import android.view.LayoutInflater
 import android.view.View
@@ -47,6 +47,7 @@ class GenderImageAdapter(
      */
     fun updateSelectedPosition(newPosition: Int) {
         selectedPosition = newPosition
+        notifyItemChanged(newPosition)
     }
 
     class GenderImageViewHolder(view: View) : RecyclerView.ViewHolder(view) {

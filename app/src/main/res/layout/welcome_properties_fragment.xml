@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.welcome.WelcomeActivity">
+
+    <TextView
+        android:id="@+id/welcome_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="casual"
+        android:text="@string/welcome_title"
+        android:textAlignment="center"
+        android:textSize="36sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Image Swiping -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/genderImageViewPager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="50dp"
+        android:minHeight="300dp"
+        app:layout_constraintBottom_toTopOf="@id/welcome_next_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/welcome_title" />
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/weightSeekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="300"
+        android:progress="70"
+        app:layout_constraintEnd_toEndOf="@+id/genderImageViewPager"
+        app:layout_constraintStart_toStartOf="@+id/genderImageViewPager"
+        app:layout_constraintTop_toBottomOf="@+id/genderImageViewPager" />
+
+    <TextView
+        android:id="@+id/weightTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/weightTitle"
+        android:fontFamily="casual"
+        app:layout_constraintTop_toBottomOf="@+id/weightSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/weightSeekBar"
+        app:layout_constraintEnd_toEndOf="@+id/weightSeekBar"
+        android:layout_marginTop="-5dp" />
+
+    <VerticalSeekBar
+        android:id="@+id/ageSeekBar"
+        android:layout_width="15dp"
+        android:layout_height="0dp"
+        android:max="100"
+        android:progress="25"
+        app:layout_constraintBottom_toBottomOf="@+id/genderImageViewPager"
+        app:layout_constraintEnd_toStartOf="@+id/genderImageViewPager"
+        app:layout_constraintTop_toTopOf="@+id/genderImageViewPager" />
+
+    <VerticalTextView
+        android:id="@+id/ageTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ageTitle"
+        android:fontFamily="casual"
+        app:rotationAngle="270"
+        app:layout_constraintTop_toTopOf="@+id/ageSeekBar"
+        app:layout_constraintBottom_toBottomOf="@+id/ageSeekBar"
+        app:layout_constraintEnd_toStartOf="@+id/ageSeekBar" />
+
+    <VerticalSeekBar
+        android:id="@+id/heightSeekBar"
+        android:layout_width="15dp"
+        android:layout_height="0dp"
+        android:max="300"
+        android:orientation="vertical"
+        android:progress="170"
+        app:layout_constraintTop_toTopOf="@+id/genderImageViewPager"
+        app:layout_constraintBottom_toBottomOf="@+id/genderImageViewPager"
+        app:layout_constraintStart_toEndOf="@+id/genderImageViewPager" />
+
+    <VerticalTextView
+        android:id="@+id/heightTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/heightTitle"
+        android:fontFamily="casual"
+        app:rotationAngle="90"
+        app:layout_constraintTop_toTopOf="@+id/heightSeekBar"
+        app:layout_constraintBottom_toBottomOf="@+id/heightSeekBar"
+        app:layout_constraintStart_toEndOf="@+id/heightSeekBar" />
+
+    <Button
+        android:id="@+id/welcome_next_btn"
+        style="@style/NextButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="32dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.welcome.WelcomeActivity">
+
+    <TextView
+        android:id="@+id/welcome_goals_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="casual"
+        android:text="@string/welcome_goals_title"
+        android:textAlignment="center"
+        android:textSize="36sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/selectedGenderImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="5dp"
+        android:contentDescription="@string/gender_image_description"
+        app:layout_constraintBottom_toTopOf="@id/weightGoalSeekBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/welcome_goals_title"
+        android:scaleType="centerCrop" />
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/weightGoalSeekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="300"
+        android:progress="70"
+        app:layout_constraintEnd_toEndOf="@+id/selectedGenderImage"
+        app:layout_constraintStart_toStartOf="@+id/selectedGenderImage"
+        app:layout_constraintTop_toBottomOf="@+id/selectedGenderImage"
+        app:layout_constraintBottom_toTopOf="@+id/weightGoalTitle" />
+
+    <TextView
+        android:id="@+id/weightGoalTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/weightGoalTitle"
+        android:textSize="26sp"
+        android:fontFamily="casual"
+        app:layout_constraintTop_toBottomOf="@+id/weightGoalSeekBar"
+        app:layout_constraintBottom_toTopOf="@+id/welcome_done_btn"
+        app:layout_constraintStart_toStartOf="@+id/weightGoalSeekBar"
+        app:layout_constraintEnd_toEndOf="@+id/weightGoalSeekBar"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="20dp"/>
+
+    <Button
+        android:id="@+id/welcome_back_btn"
+        style="@style/BackButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <Button
+        android:id="@+id/welcome_done_btn"
+        style="@style/BlackConfirmButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

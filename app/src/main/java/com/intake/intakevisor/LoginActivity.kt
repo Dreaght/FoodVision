@@ -16,6 +16,7 @@ import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.intake.intakevisor.ui.welcome.WelcomeActivity
 
 class LoginActivity : AppCompatActivity() {
 

@@ -18,4 +18,7 @@
     <string name="ageTitle">Age: %1$d</string>
     <string name="heightTitle">Height: %1$d</string>
     <string name="weightTitle">Weight: %1$d</string>
+    <string name="welcome_goals_title">And where\n we go</string>
+    <string name="weightGoalTitle">I want to weigh\n%1$d kilograms.</string>
+    <string name="gender_image_description">Selected gender</string>
 </resources>

@@ -15,7 +15,7 @@
     </item>
 
     <!-- Back Arrow -->
-    <item android:left="5dp" android:top="5dp" android:bottom="5dp">
+    <item android:left="0dp" android:top="5dp" android:bottom="5dp">
         <vector
             android:width="70dp"
             android:height="70dp"
