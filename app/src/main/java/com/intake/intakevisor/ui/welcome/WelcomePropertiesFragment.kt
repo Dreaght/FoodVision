@@ -96,6 +96,7 @@ class WelcomePropertiesFragment : Fragment() {
         binding.otherGender.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 Toast.makeText(welcomeActivity, R.string.other_gender_toast, Toast.LENGTH_LONG).show()
+                welcomeActivity.userData.isOtherButtonSelected = true
             }
         })
     }
