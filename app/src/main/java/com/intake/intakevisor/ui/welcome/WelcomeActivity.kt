@@ -2,7 +2,6 @@ package com.intake.intakevisor.ui.welcome
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import com.intake.intakevisor.BaseActivity
 import com.intake.intakevisor.DiaryActivity
@@ -59,6 +58,9 @@ class WelcomeActivity : BaseActivity() {
 
     fun finishWelcome() {
         saveUserData()
+
+        val preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
+        preferences.edit().putBoolean("isFirstRun", false).apply()
 
         startActivity(Intent(this, DiaryActivity::class.java))
         finish()

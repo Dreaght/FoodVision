@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
@@ -90,6 +91,12 @@ class WelcomePropertiesFragment : Fragment() {
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        binding.otherGender.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                Toast.makeText(welcomeActivity, R.string.other_gender_toast, Toast.LENGTH_LONG).show()
+            }
         })
     }
 
