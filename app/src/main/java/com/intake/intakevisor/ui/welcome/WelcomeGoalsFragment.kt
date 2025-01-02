@@ -35,15 +35,11 @@ class WelcomeGoalsFragment : Fragment() {
         binding.weightGoalSeekBar.progress = welcomeActivity.userData.goalWeight
         binding.weightGoalTitle.text = getString(R.string.weightGoalTitle, welcomeActivity.userData.goalWeight)
 
-        if (!welcomeActivity.userData.isOtherButtonSelected) {
-            binding.selectedGenderImage.setImageResource(when (welcomeActivity.userData.gender) {
-                "Male" -> R.drawable.man
-                "Female" -> R.drawable.woman
-                else -> R.drawable.man
-            })
-        } else {
-            binding.selectedGenderImage.setImageResource(R.drawable.other)
-        }
+        binding.selectedGenderImage.setImageResource(when (welcomeActivity.userData.gender) {
+            "Male" -> R.drawable.man
+            "Female" -> R.drawable.woman
+            else -> R.drawable.man
+        })
 
         binding.welcomeBackBtn.setOnClickListener {
             welcomeActivity.supportFragmentManager.popBackStack()

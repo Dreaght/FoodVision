@@ -5,8 +5,7 @@ data class UserData(
     var weight: Int = 70,
     var height: Int = 170,
     var age: Int = 25,
-    var goalWeight: Int = 70,
-    var isOtherButtonSelected: Boolean = false
+    var goalWeight: Int = 70
 ) {
     companion object {
         const val MIN_AGE = 1

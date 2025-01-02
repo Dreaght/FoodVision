@@ -6,9 +6,9 @@ import android.view.View
 import android.widget.ImageView
 import com.intake.intakevisor.ChatActivity
 import com.intake.intakevisor.DiaryActivity
-import com.intake.intakevisor.FeedbackActivity
+import com.intake.intakevisor.ui.feedback.FeedbackActivity
 import com.intake.intakevisor.R
-import com.intake.intakevisor.SettingsActivity
+import com.intake.intakevisor.ui.welcome.WelcomeActivity
 
 class MenuHelper(private val activity: Activity) {
 
@@ -28,7 +28,7 @@ class MenuHelper(private val activity: Activity) {
             activity.startActivity(Intent(activity, ChatActivity::class.java))
         }
         settingsButton.setOnClickListener {
-            activity.startActivity(Intent(activity, SettingsActivity::class.java))
+            activity.startActivity(Intent(activity, WelcomeActivity::class.java))
         }
     }
 }

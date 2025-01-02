@@ -22,6 +22,7 @@ firebaseAuthKtx = "23.1.0"
 recyclerview = "1.3.2"
 recyclerviewVersion = "1.3.0"
 roomRuntime = "2.6.1"
+gridlayout = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -54,6 +55,7 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerviewVersion" }
+androidx-gridlayout = { group = "androidx.gridlayout", name = "gridlayout", version.ref = "gridlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

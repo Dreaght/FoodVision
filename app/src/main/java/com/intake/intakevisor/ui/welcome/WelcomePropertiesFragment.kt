@@ -92,13 +92,6 @@ class WelcomePropertiesFragment : Fragment() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
-
-        binding.otherGender.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                Toast.makeText(welcomeActivity, R.string.other_gender_toast, Toast.LENGTH_LONG).show()
-                welcomeActivity.userData.isOtherButtonSelected = true
-            }
-        })
     }
 
     private fun setupViewPager() {

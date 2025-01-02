@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.recyclerview)
+    implementation(libs.androidx.gridlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

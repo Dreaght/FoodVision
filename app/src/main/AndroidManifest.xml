@@ -32,7 +32,7 @@
             android:name=".DiaryActivity"
             android:exported="false" />
         <activity
-            android:name=".FeedbackActivity"
+            android:name=".ui.feedback.FeedbackActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"

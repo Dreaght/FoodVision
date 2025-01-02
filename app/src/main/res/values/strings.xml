@@ -21,6 +21,4 @@
     <string name="welcome_goals_title">And where\n we go</string>
     <string name="weightGoalTitle">I want to weigh\n%1$d kilograms.</string>
     <string name="gender_image_description">Selected gender</string>
-    <string name="other_gender_button">Other</string>
-    <string name="other_gender_toast">There is no other gender, u black ass swine xD</string>
 </resources>

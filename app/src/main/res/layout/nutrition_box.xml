@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:background="@drawable/nutrition_box_bg">
+
+    <!-- Nutrition Name -->
+    <TextView
+        android:id="@+id/nutrition_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Protein"
+        android:textSize="26sp"
+        android:fontFamily="casual"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Actual Value Label -->
+    <TextView
+        android:id="@+id/nutrition_actual_value_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:fontFamily="sans-serif-black"
+        android:text="Actual"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@id/nutrition_name"
+        app:layout_constraintStart_toStartOf="@id/nutrition_name" />
+
+    <!-- Actual Value -->
+    <TextView
+        android:id="@+id/nutrition_actual_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:paddingBottom="5dp"
+        android:fontFamily="@font/asset"
+        android:text="8%"
+        android:textSize="11sp"
+        android:scaleY="1.5"
+        app:layout_constraintTop_toBottomOf="@id/nutrition_actual_value_label"
+        app:layout_constraintStart_toStartOf="@id/nutrition_actual_value_label"
+        app:layout_constraintEnd_toEndOf="@id/nutrition_actual_value_label" />
+
+    <!-- Recommended Value Label -->
+    <TextView
+        android:id="@+id/nutrition_recommended_value_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:fontFamily="sans-serif-black"
+        android:text="Target"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/nutrition_actual_value_label"
+        app:layout_constraintStart_toEndOf="@id/nutrition_actual_value_label" />
+
+    <!-- Recommended Value -->
+    <TextView
+        android:id="@+id/nutrition_recommended_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:paddingBottom="5dp"
+        android:fontFamily="@font/asset"
+        android:text="10%"
+        android:textSize="11sp"
+        android:scaleY="1.5"
+        app:layout_constraintTop_toBottomOf="@id/nutrition_actual_value_label"
+        app:layout_constraintStart_toStartOf="@id/nutrition_recommended_value_label"
+        app:layout_constraintEnd_toEndOf="@id/nutrition_recommended_value_label" />
+</androidx.constraintlayout.widget.ConstraintLayout>
