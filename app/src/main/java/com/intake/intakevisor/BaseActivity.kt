@@ -10,21 +10,13 @@ open class BaseActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun startActivity(intent: Intent) {
         super.startActivity(intent)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, 0, 0) // Disable animation
-        } else {
-            overridePendingTransition(0, 0) // Fallback for older versions
-        }
+        overridePendingTransition(0, 0)
     }
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun finish() {
         super.finish()
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0) // Disable animation
-        } else {
-            overridePendingTransition(0, 0) // Fallback for older versions
-        }
+        overridePendingTransition(0, 0)
     }
 
 }
