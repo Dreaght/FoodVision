@@ -46,8 +46,6 @@ class WelcomeGoalsFragment : Fragment() {
         }
 
         binding.welcomeDoneBtn.setOnClickListener {
-            welcomeActivity.userData.goalWeight = binding.weightGoalSeekBar.progress
-
             welcomeActivity.finishWelcome()
         }
 
@@ -56,6 +54,7 @@ class WelcomeGoalsFragment : Fragment() {
                 val validProgress = if (progress < UserData.MIN_WEIGHT) UserData.MIN_WEIGHT else progress
                 binding.weightGoalSeekBar.progress = validProgress // reset progress if it's below the min
                 binding.weightGoalTitle.text = getString(R.string.weightGoalTitle, validProgress)
+                welcomeActivity.userData.goalWeight = validProgress
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}

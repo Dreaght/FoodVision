@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingsActivity">
+    tools:context=".ui.settings.SettingsActivity">
 
     <!-- Bottom Menu Panel -->
     <include
@@ -18,13 +18,123 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/yourInfoLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Settings"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="30dp"
+        android:text="@string/settings_header"
+        android:textSize="30sp"
+        android:fontFamily="casual"/>
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/weightSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="30dp"
+        android:max="300"
+        android:progress="70"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/yourInfoLabel"/>
+
+    <TextView
+        android:id="@+id/weightTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/weightTitle"
+        android:fontFamily="casual"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@+id/weightSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/weightSeekBar"
+        app:layout_constraintEnd_toEndOf="@+id/weightSeekBar"
+        android:layout_marginTop="-5dp" />
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/heightSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="30dp"
+        android:max="300"
+        android:progress="70"
+        app:layout_constraintStart_toStartOf="@id/weightSeekBar"
+        app:layout_constraintEnd_toEndOf="@id/weightSeekBar"
+        app:layout_constraintTop_toBottomOf="@id/weightSeekBar"/>
+
+    <TextView
+        android:id="@+id/heightTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/heightTitle"
+        android:fontFamily="casual"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@+id/heightSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/heightSeekBar"
+        app:layout_constraintEnd_toEndOf="@+id/heightSeekBar"
+        android:layout_marginTop="-5dp" />
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/ageSeekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:max="300"
+        android:progress="70"
+        app:layout_constraintStart_toEndOf="@id/ageTitle"
+        app:layout_constraintEnd_toEndOf="@id/weightSeekBar"
+        app:layout_constraintTop_toTopOf="@id/ageTitle"/>
+
+    <TextView
+        android:id="@+id/ageTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ageTitle"
+        android:fontFamily="casual"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@+id/heightTitle"
+        app:layout_constraintStart_toStartOf="@+id/heightSeekBar"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="20dp"/>
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/weightGoalSeekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:max="300"
+        android:progress="70"
+        app:layout_constraintEnd_toEndOf="@id/weightSeekBar"
+        app:layout_constraintStart_toStartOf="@id/weightSeekBar"
+        app:layout_constraintTop_toBottomOf="@+id/ageTitle"
+        app:layout_constraintBottom_toTopOf="@+id/weightGoalTitle" />
+
+    <TextView
+        android:id="@+id/weightGoalTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_weight_goal_title"
+        android:fontFamily="casual"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@+id/weightGoalSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/weightGoalSeekBar"
+        app:layout_constraintEnd_toEndOf="@+id/weightGoalSeekBar"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="20dp"/>
+
+    <Button
+        android:id="@+id/confirm_settings_btn"
+        style="@style/BlackConfirmButton"
+        android:visibility="gone"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

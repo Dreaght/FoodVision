@@ -16,9 +16,11 @@
     <string name="welcome_title">Let\'s see how\n you are</string>
     <string name="welcome_done_btn">Done</string>
     <string name="ageTitle">Age: %1$d</string>
-    <string name="heightTitle">Height: %1$d sm</string>
+    <string name="heightTitle">Height: %1$d cm</string>
     <string name="weightTitle">Weight: %1$d kg</string>
     <string name="welcome_goals_title">And where\n we go</string>
     <string name="weightGoalTitle">I want to weigh\n%1$d kilograms.</string>
     <string name="gender_image_description">Selected gender</string>
+    <string name="settings_weight_goal_title">Weight goal: %1$d</string>
+    <string name="settings_header">Your personal info</string>
 </resources>
