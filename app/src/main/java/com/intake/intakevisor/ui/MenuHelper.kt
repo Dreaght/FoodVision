@@ -24,18 +24,22 @@ class MenuHelper(private val activity: Activity) {
 
         binding.btnDiary.setOnClickListener {
             activity.startActivity(Intent(activity, DiaryActivity::class.java))
+            activity.finish()
             activateDiary(binding)
         }
         binding.btnFeedback.setOnClickListener {
             activity.startActivity(Intent(activity, FeedbackActivity::class.java))
+            activity.finish()
             activateFeedback(binding)
         }
         binding.btnChat.setOnClickListener {
             activity.startActivity(Intent(activity, ChatActivity::class.java))
+            activity.finish()
             activateChat(binding)
         }
         binding.btnSettings.setOnClickListener {
             activity.startActivity(Intent(activity, SettingsActivity::class.java))
+            activity.finish()
             activateSettings(binding)
         }
     }
