@@ -1,8 +1,10 @@
 package com.intake.intakevisor.ui.settings
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
+import androidx.annotation.RequiresApi
 import com.intake.intakevisor.BaseMenuActivity
 import com.intake.intakevisor.R
 import com.intake.intakevisor.databinding.ActivitySettingsBinding
@@ -27,10 +29,10 @@ class SettingsActivity : BaseMenuActivity() {
     }
 
     private fun setupUI() {
+        setupDatePicker()
+
         binding.weightSeekBar.progress = userData.weight
         binding.weightTitle.text = getString(R.string.weightTitle, userData.weight)
-        binding.ageSeekBar.progress = userData.age
-        binding.ageTitle.text = getString(R.string.ageTitle, userData.age)
         binding.heightSeekBar.progress = userData.height
         binding.heightTitle.text = getString(R.string.heightTitle, userData.height)
         binding.weightGoalSeekBar.progress = userData.goalWeight
@@ -38,9 +40,11 @@ class SettingsActivity : BaseMenuActivity() {
 
         binding.confirmSettingsBtn.setOnClickListener {
             userData.weight = binding.weightSeekBar.progress
-            userData.age = binding.ageSeekBar.progress
             userData.height = binding.heightSeekBar.progress
             userData.goalWeight = binding.weightGoalSeekBar.progress
+            userData.birthDate = binding.birthDatePicker.year.toString() + "-" +
+                    (binding.birthDatePicker.month + 1).toString() + "-" +
+                    binding.birthDatePicker.dayOfMonth.toString()
 
             saveUserData()
             binding.confirmSettingsBtn.visibility = View.GONE
@@ -53,21 +57,6 @@ class SettingsActivity : BaseMenuActivity() {
                 binding.weightSeekBar.progress = validProgress // reset progress if it's below the min
                 binding.weightTitle.text = getString(R.string.weightTitle, validProgress)
                 userData.weight = validProgress
-                binding.confirmSettingsBtn.visibility = View.VISIBLE
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-
-        // Update Age TextView
-        binding.ageSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                // Enforce minimum age (e.g., can't be 0)
-                val validProgress = if (progress < UserData.MIN_AGE) UserData.MIN_AGE else progress
-                binding.ageSeekBar.progress = validProgress // reset progress if it's below the min
-                binding.ageTitle.text = getString(R.string.ageTitle, validProgress)
-                userData.age = validProgress
                 binding.confirmSettingsBtn.visibility = View.VISIBLE
             }
 
@@ -104,11 +93,24 @@ class SettingsActivity : BaseMenuActivity() {
         })
     }
 
+    private fun setupDatePicker() {
+        val birthDate = sharedPreferences.getString("birthDate", "2000-01-01")
+        val (year, month, day) = birthDate!!.split("-").map { it.toInt() }
+
+        binding.birthDatePicker.updateDate(year, month - 1, day) // Month is 0-indexed
+        binding.birthDatePicker.setOnDateChangedListener { _, selectedYear, selectedMonth, selectedDay ->
+            val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
+            userData.birthDate = selectedDate
+            binding.confirmSettingsBtn.visibility = View.VISIBLE
+        }
+    }
+
     private fun saveUserData() {
         with(sharedPreferences.edit()) {
             putInt("weight", userData.weight)
             putInt("height", userData.height)
             putInt("age", userData.age)
+            putString("birthDate", userData.birthDate)
             putInt("goalWeight", userData.goalWeight)
             apply() // Apply changes asynchronously
         }
@@ -119,5 +121,6 @@ class SettingsActivity : BaseMenuActivity() {
         userData.height = sharedPreferences.getInt("height", userData.height)
         userData.age = sharedPreferences.getInt("age", userData.age)
         userData.goalWeight = sharedPreferences.getInt("goalWeight", userData.goalWeight)
+        userData.birthDate = sharedPreferences.getString("birthDate", userData.birthDate)!!
     }
 }

@@ -39,14 +39,15 @@ class WelcomePropertiesFragment : Fragment() {
     private fun setupUI() {
         binding.weightSeekBar.progress = welcomeActivity.userData.weight
         binding.weightTitle.text = getString(R.string.weightTitle, welcomeActivity.userData.weight)
-        binding.ageSeekBar.progress = welcomeActivity.userData.age
-        binding.ageTitle.text = getString(R.string.ageTitle, welcomeActivity.userData.age)
         binding.heightSeekBar.progress = welcomeActivity.userData.height
         binding.heightTitle.text = getString(R.string.heightTitle, welcomeActivity.userData.height)
+        val genderName = if (welcomeActivity.userData.gender == "Male")
+            getString(R.string.gender_name_man)
+        else getString(R.string.gender_name_woman)
+        binding.genderName.text = genderName
 
         binding.welcomeNextBtn.setOnClickListener {
             welcomeActivity.userData.weight = binding.weightSeekBar.progress
-            welcomeActivity.userData.age = binding.ageSeekBar.progress
             welcomeActivity.userData.height = binding.heightSeekBar.progress
 
             welcomeActivity.loadFragment(WelcomeGoalsFragment())
@@ -59,20 +60,6 @@ class WelcomePropertiesFragment : Fragment() {
                 binding.weightSeekBar.progress = validProgress // reset progress if it's below the min
                 binding.weightTitle.text = getString(R.string.weightTitle, validProgress)
                 welcomeActivity.userData.weight = validProgress
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-
-        // Update Age TextView
-        binding.ageSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                // Enforce minimum age (e.g., can't be 0)
-                val validProgress = if (progress < UserData.MIN_AGE) UserData.MIN_AGE else progress
-                binding.ageSeekBar.progress = validProgress // reset progress if it's below the min
-                binding.ageTitle.text = getString(R.string.ageTitle, validProgress)
-                welcomeActivity.userData.age = validProgress
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -125,6 +112,10 @@ class WelcomePropertiesFragment : Fragment() {
                     adapter.updateSelectedPosition(position)
                 }
                 welcomeActivity.userData.gender = if (position == 0) "Male" else "Female"
+                val genderName = if (welcomeActivity.userData.gender == "Male")
+                                        getString(R.string.gender_name_man)
+                                else getString(R.string.gender_name_woman)
+                binding.genderName.text = genderName
             }
         })
     }

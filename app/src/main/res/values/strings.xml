@@ -13,16 +13,22 @@
     <string name="food_icon">Food Icon</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
-    <string name="welcome_title">Let\'s see how\n you are</string>
+    <string name="welcome_title">Let\'s save a little bit of me, sweetie :)</string>
     <string name="welcome_done_btn">Done</string>
     <string name="ageTitle">Age: %1$d</string>
     <string name="heightTitle">Height: %1$d cm</string>
+    <string name="settingsHeightTitle">Current height: %1$d cm</string>
     <string name="weightTitle">Weight: %1$d kg</string>
-    <string name="welcome_goals_title">And where\n we go</string>
+    <string name="settingsWeightTitle">Current weight: %1$d kg</string>
+    <string name="welcome_goals_title">And what\'s my goal?</string>
     <string name="weightGoalTitle">I want to weigh\n%1$d kilograms.</string>
     <string name="gender_image_description">Selected gender</string>
-    <string name="settings_weight_goal_title">Weight goal: %1$d</string>
-    <string name="settings_header">Your personal info</string>
+    <string name="settings_weight_goal_title">Goal weight: %1$d kg</string>
+    <string name="settings_header">Profile</string>
     <string name="message_input_hint">Type a message…</string>
     <string name="chat_title">Assistant chat.\n Messages wont be saved.</string>
+    <string name="birthDateTitle">Birth:</string>
+    <string name="gender_name_man">I\'m a man</string>
+    <string name="gender_name_woman">I\'m a woman</string>
+    <string name="welcome_age_title">I was born in...</string>
 </resources>

@@ -179,7 +179,7 @@ class LoginActivity : AppCompatActivity() {
         val preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
         val isFirstRun = preferences.getBoolean("isFirstRun", true)
 
-        if (isFirstRun) {
+        if (true) {
             startActivity(Intent(this, WelcomeActivity::class.java))
 
             // Finish LoginActivity to prevent stacking

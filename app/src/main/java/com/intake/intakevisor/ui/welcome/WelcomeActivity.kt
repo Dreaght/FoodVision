@@ -43,6 +43,7 @@ class WelcomeActivity : BaseActivity() {
             putInt("weight", userData.weight)
             putInt("height", userData.height)
             putInt("age", userData.age)
+            putString("birthDate", userData.birthDate)
             putInt("goalWeight", userData.goalWeight)
             apply() // Apply changes asynchronously
         }
@@ -54,6 +55,7 @@ class WelcomeActivity : BaseActivity() {
         userData.height = sharedPreferences.getInt("height", userData.height)
         userData.age = sharedPreferences.getInt("age", userData.age)
         userData.goalWeight = sharedPreferences.getInt("goalWeight", userData.goalWeight)
+        userData.birthDate = sharedPreferences.getString("birthDate", userData.birthDate)!!
     }
 
     fun finishWelcome() {

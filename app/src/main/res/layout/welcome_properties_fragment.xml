@@ -11,11 +11,12 @@
         android:id="@+id/welcome_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="30dp"
         android:fontFamily="casual"
         android:text="@string/welcome_title"
         android:textAlignment="center"
         android:textSize="36sp"
+        android:layout_marginHorizontal="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,6 +35,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/welcome_title" />
+
+    <TextView
+        android:id="@+id/gender_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/genderImageViewPager"
+        app:layout_constraintStart_toStartOf="@id/genderImageViewPager"
+        app:layout_constraintEnd_toEndOf="@id/genderImageViewPager"
+        android:layout_marginBottom="30dp"
+        android:text="@string/gender_name_man"
+        android:fontFamily="casual"
+        android:textSize="30sp" />
 
     <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/weightSeekBar"
@@ -55,27 +68,6 @@
         app:layout_constraintStart_toStartOf="@+id/weightSeekBar"
         app:layout_constraintEnd_toEndOf="@+id/weightSeekBar"
         android:layout_marginTop="-5dp" />
-
-    <VerticalSeekBar
-        android:id="@+id/ageSeekBar"
-        android:layout_width="15dp"
-        android:layout_height="0dp"
-        android:max="100"
-        android:progress="25"
-        app:layout_constraintBottom_toBottomOf="@+id/genderImageViewPager"
-        app:layout_constraintEnd_toStartOf="@+id/genderImageViewPager"
-        app:layout_constraintTop_toTopOf="@+id/genderImageViewPager" />
-
-    <VerticalTextView
-        android:id="@+id/ageTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ageTitle"
-        android:fontFamily="casual"
-        app:rotationAngle="270"
-        app:layout_constraintTop_toTopOf="@+id/ageSeekBar"
-        app:layout_constraintBottom_toBottomOf="@+id/ageSeekBar"
-        app:layout_constraintEnd_toStartOf="@+id/ageSeekBar" />
 
     <VerticalSeekBar
         android:id="@+id/heightSeekBar"

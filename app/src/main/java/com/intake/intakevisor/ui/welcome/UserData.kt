@@ -5,11 +5,12 @@ data class UserData(
     var weight: Int = 70,
     var height: Int = 170,
     var age: Int = 25,
-    var goalWeight: Int = 70
+    var goalWeight: Int = 70,
+    var birthDate: String = "2000-01-01"
 ) {
     companion object {
         const val MIN_AGE = 1
         const val MIN_HEIGHT = 50 // cm
-        const val MIN_WEIGHT = 10  // kg
+        const val MIN_WEIGHT = 10 // kg
     }
 }

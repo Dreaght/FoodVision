@@ -45,8 +45,8 @@ class WelcomeGoalsFragment : Fragment() {
             welcomeActivity.supportFragmentManager.popBackStack()
         }
 
-        binding.welcomeDoneBtn.setOnClickListener {
-            welcomeActivity.finishWelcome()
+        binding.welcomeNextBtn.setOnClickListener {
+            welcomeActivity.loadFragment(WelcomeAgeFragment())
         }
 
         binding.weightGoalSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
