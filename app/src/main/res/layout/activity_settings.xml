@@ -139,4 +139,44 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Google Account Section -->
+    <LinearLayout
+        android:id="@+id/googleAccountSection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/logoutButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/logoutButton"
+        android:layout_marginStart="30dp">
+
+        <ImageView
+            android:id="@+id/googleIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_google_icon" />
+
+        <TextView
+            android:id="@+id/googleAccountEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="example@gmail.com"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:fontFamily="casual" />
+    </LinearLayout>
+
+    <!-- Logout Button -->
+    <ImageButton
+        android:id="@+id/logoutButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toTopOf="@id/menuPanel"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="?attr/selectableItemBackground"
+        android:src="@drawable/ic_logout_icon" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

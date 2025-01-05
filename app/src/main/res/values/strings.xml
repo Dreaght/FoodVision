@@ -28,7 +28,7 @@
     <string name="message_input_hint">Type a message…</string>
     <string name="chat_title">Assistant chat.\n Messages wont be saved.</string>
     <string name="birthDateTitle">Birth:</string>
-    <string name="gender_name_man">I\'m a man</string>
-    <string name="gender_name_woman">I\'m a woman</string>
-    <string name="welcome_age_title">I was born in...</string>
+    <string name="gender_name_man">I\'m a male</string>
+    <string name="gender_name_woman">I\'m a female</string>
+    <string name="welcome_age_title">I was born in…</string>
 </resources>
