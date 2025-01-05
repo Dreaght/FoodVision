@@ -23,7 +23,7 @@
             android:name=".ui.welcome.WelcomeActivity"
             android:exported="false" />
         <activity
-            android:name=".ChatActivity"
+            android:name=".ui.chat.ChatActivity"
             android:exported="false" />
         <activity
             android:name=".ui.settings.SettingsActivity"

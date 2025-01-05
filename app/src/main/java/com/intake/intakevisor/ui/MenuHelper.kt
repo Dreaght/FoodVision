@@ -2,7 +2,7 @@ package com.intake.intakevisor.ui
 
 import android.app.Activity
 import android.content.Intent
-import com.intake.intakevisor.ChatActivity
+import com.intake.intakevisor.ui.chat.ChatActivity
 import com.intake.intakevisor.DiaryActivity
 import com.intake.intakevisor.ui.feedback.FeedbackActivity
 import com.intake.intakevisor.databinding.MenuPanelBinding
