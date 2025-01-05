@@ -7,6 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".ui.chat.ChatActivity">
 
+    <TextView
+        android:id="@+id/chat_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/chat_title"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <!-- Messages History -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messagesRecyclerView"
@@ -19,7 +30,7 @@
         app:layout_constraintBottom_toTopOf="@+id/messageInputLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:itemCount="3"
+        tools:itemCount="0"
         tools:listitem="@layout/item_message" />
 
     <!-- Input Panel -->
@@ -41,7 +52,7 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/rounded_input_background"
-            android:hint="Type a message..."
+            android:hint="@string/message_input_hint"
             android:paddingHorizontal="16dp"
             android:imeOptions="actionSend"
             android:inputType="text"
@@ -63,7 +74,7 @@
         android:id="@+id/menuPanel"
         layout="@layout/menu_panel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

@@ -23,4 +23,6 @@
     <string name="gender_image_description">Selected gender</string>
     <string name="settings_weight_goal_title">Weight goal: %1$d</string>
     <string name="settings_header">Your personal info</string>
+    <string name="message_input_hint">Type a message…</string>
+    <string name="chat_title">Assistant chat.\n Messages wont be saved.</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.intake.intakevisor.ui.chat
 
 import android.os.Bundle
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.intake.intakevisor.BaseMenuActivity
@@ -64,6 +65,8 @@ class ChatActivity : BaseMenuActivity() {
                         messages[lastMessageIndex] = Message(Message.SENDER_ASSISTANT, updatedMessage)
                     }
                 }
+
+                binding.chatTitle.visibility = View.GONE
 
                 // Notify the adapter to update the RecyclerView
                 adapter.notifyItemChanged(messages.size - 1)
