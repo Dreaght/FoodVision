@@ -36,12 +36,16 @@ open class BaseMenuActivity : BaseActivity() {
     }
 
     override fun loadFragment(fragment: Fragment) {
+        activateItemInMenu(fragment)
+        super.loadFragment(fragment)
+    }
+
+    fun activateItemInMenu(fragment: Fragment) {
         when (fragment) {
             is DiaryFragment -> menuHelper.activateDiary(binding)
             is FeedbackFragment -> menuHelper.activateFeedback(binding)
             is ChatFragment -> menuHelper.activateChat(binding)
             is SettingsFragment -> menuHelper.activateSettings(binding)
         }
-        super.loadFragment(fragment)
     }
 }

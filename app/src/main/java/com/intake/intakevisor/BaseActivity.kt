@@ -31,4 +31,12 @@ open class BaseActivity : AppCompatActivity() {
             .commit()
     }
 
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 1) {
+            // Pop the back stack if there are fragments to go back to
+            supportFragmentManager.popBackStack()
+        } else {
+            return
+        }
+    }
 }

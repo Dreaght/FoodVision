@@ -36,6 +36,7 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mainActivity = requireActivity() as MainActivity
+        mainActivity.activateItemInMenu(this)
 
         setupUI()
         setupRecyclerView(binding.messagesRecyclerView, messages)
