@@ -8,6 +8,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +29,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.ArrayList
@@ -72,6 +75,20 @@ class DiaryFragment : Fragment() {
     }
 
     private fun setupUI() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.daySwitcher) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            val cameraCutout = insets.displayCutout?.safeInsetTop ?: 0
+
+            // Set margin to max(status bar height, cutout height, default 20dp)
+            val marginTop = maxOf(statusBarHeight, cameraCutout, dpToPx(20))
+
+            view.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                topMargin = marginTop
+            }
+
+            insets
+        }
+
         updateCurrentDayLabel()
 
         binding.previousDay.setOnClickListener {
@@ -113,6 +130,11 @@ class DiaryFragment : Fragment() {
         refreshFoodData()
     }
 
+    private fun dpToPx(dp: Int): Int {
+        val density = resources.displayMetrics.density
+        return (dp * density).toInt()
+    }
+
     private fun updateCurrentDayLabel() {
         val today = Calendar.getInstance()
         val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_MONTH, -1) }
@@ -131,36 +153,32 @@ class DiaryFragment : Fragment() {
 
     private fun changeDay(offset: Int) {
         val today = Calendar.getInstance()
-        val cutoffDate = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -3) }
         val targetDay = (currentDay.clone() as Calendar).apply { add(Calendar.DAY_OF_MONTH, offset) }
 
-        // Prevent navigating to future dates
         if (targetDay.after(today)) {
-            return
+            return // Prevent future navigation
         }
 
-        val allowNavigation = runBlocking {
-            if (targetDay.before(cutoffDate)) {
-                for (i in 0 until 3) {
-                    val dayToCheck = (targetDay.clone() as Calendar).apply { add(Calendar.DAY_OF_MONTH, i + 1) }
-                    val formattedDate = dateFormatter.format(dayToCheck.time)
-                    if (localDiaryDatabase.hasDataForDate(formattedDate)) {
-                        return@runBlocking true
-                    }
+        currentJob?.cancel() // Cancel any ongoing jobs
+
+        currentJob = CoroutineScope(Dispatchers.IO).launch {
+            val allowNavigation = if (targetDay.before(Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -3) })) {
+                // Check for historical data
+                (0..2).any { historyOffset ->
+                    val dayToCheck = (targetDay.clone() as Calendar).apply { add(Calendar.DAY_OF_MONTH, historyOffset + 1) }
+                    localDiaryDatabase.hasDataForDate(dateFormatter.format(dayToCheck.time))
                 }
-                return@runBlocking false
+            } else true
+
+            withContext(Dispatchers.Main) {
+                if (!allowNavigation) {
+                    return@withContext
+                }
+                currentDay.time = targetDay.time
+                updateCurrentDayLabel()
+                refreshFoodData()
             }
-            true
         }
-
-        if (!allowNavigation) {
-            return
-        }
-
-        // Update the current day and refresh the UI
-        currentDay.time = targetDay.time
-        updateCurrentDayLabel()
-        refreshFoodData()
     }
 
     private fun refreshFoodData() {
@@ -251,6 +269,8 @@ class DiaryFragment : Fragment() {
         sessionFoodFragments.put(uniqueSessionId, mutableListOf())
 
         startActivity(intent)
+
+        mainActivity.finish()
     }
 
     private fun handleFoodFragments() {

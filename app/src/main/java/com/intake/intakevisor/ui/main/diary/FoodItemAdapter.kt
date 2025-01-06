@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.intake.intakevisor.R
 
 class FoodItemAdapter(private val foodItemList: List<FoodItem>) :
@@ -21,13 +22,11 @@ class FoodItemAdapter(private val foodItemList: List<FoodItem>) :
         val foodItem = foodItemList[position]
         holder.foodName.text = foodItem.name
 
-        if (foodItem.image.width == 0 || foodItem.image.height == 0) {
-            holder.foodIcon.setImageResource(R.drawable.food_icon_placeholder) // Use a default placeholder
-        } else {
-            holder.foodIcon.setImageBitmap(foodItem.image)
-        }
-
-        holder.foodIcon.setImageBitmap(foodItem.image)
+        Glide.with(holder.foodIcon.context)
+            .load(foodItem.image) // Replace with your image path or bitmap
+            .placeholder(R.drawable.food_icon_placeholder) // Placeholder image
+            .override(100, 100) // Resize image
+            .into(holder.foodIcon)
     }
 
     override fun getItemCount(): Int = foodItemList.size

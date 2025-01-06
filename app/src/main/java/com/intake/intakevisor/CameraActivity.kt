@@ -209,16 +209,18 @@ class CameraActivity : AppCompatActivity() {
                 foodFragments.add(FoodFragment(image = imageBytes, nutritionInfo = nutritionInfo))
             }
 
-            // Pass food fragments and meal type to DiaryActivity
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putParcelableArrayListExtra("food_fragments", foodFragments)
-            intent.putExtra("meal_type", mealType)  // Pass meal type to DiaryActivity
-            intent.putExtra("selected_date", selectedDate)
-            intent.putExtra("session_id", sessionId)
-            startActivity(intent)
-
-            finish()
+            startDiary(foodFragments)
         }
+    }
+
+    private fun startDiary(foodFragments: ArrayList<FoodFragment>) {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putParcelableArrayListExtra("food_fragments", foodFragments)
+        intent.putExtra("meal_type", mealType)  // Pass meal type to DiaryActivity
+        intent.putExtra("selected_date", selectedDate)
+        intent.putExtra("session_id", sessionId)
+        startActivity(intent)
+        finish()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -226,7 +228,7 @@ class CameraActivity : AppCompatActivity() {
             if (captureMode)
                 handleCancelButton()
             else
-                return super.onKeyDown(keyCode, event)
+                startDiary(ArrayList<FoodFragment>())
             return true
         }
         return super.onKeyDown(keyCode, event)
