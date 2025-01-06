@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <size
+                android:width="80dp"
+                android:height="80dp" />
+            <solid android:color="#00FFFFFF" />
+            <corners android:radius="40dp" />
+            <stroke
+                android:width="5dp"
+                android:color="#C8C8C8" />
+        </shape>
+    </item>
+    <item>
+        <vector
+            android:width="80dp"
+            android:height="80dp"
+            android:viewportWidth="80"
+            android:viewportHeight="80">
+            <!-- First diagonal line (top-left to bottom-right) -->
+            <path
+                android:strokeWidth="5"
+                android:strokeColor="#C8C8C8"
+                android:pathData="M20,20 L60,60" />
+            <!-- Second diagonal line (top-right to bottom-left) -->
+            <path
+                android:strokeWidth="5"
+                android:strokeColor="#C8C8C8"
+                android:pathData="M60,20 L20,60" />
+        </vector>
+    </item>
+</layer-list>

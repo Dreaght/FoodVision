@@ -1,11 +1,14 @@
 package com.intake.intakevisor.ui.settings
 
-import android.os.Build
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
-import androidx.annotation.RequiresApi
+import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.intake.intakevisor.BaseMenuActivity
+import com.intake.intakevisor.LoginActivity
 import com.intake.intakevisor.R
 import com.intake.intakevisor.databinding.ActivitySettingsBinding
 import com.intake.intakevisor.ui.welcome.UserData
@@ -37,6 +40,7 @@ class SettingsActivity : BaseMenuActivity() {
         binding.heightTitle.text = getString(R.string.heightTitle, userData.height)
         binding.weightGoalSeekBar.progress = userData.goalWeight
         binding.weightGoalTitle.text = getString(R.string.settings_weight_goal_title, userData.goalWeight)
+        hideActionButtons()
 
         binding.confirmSettingsBtn.setOnClickListener {
             userData.weight = binding.weightSeekBar.progress
@@ -47,7 +51,13 @@ class SettingsActivity : BaseMenuActivity() {
                     binding.birthDatePicker.dayOfMonth.toString()
 
             saveUserData()
-            binding.confirmSettingsBtn.visibility = View.GONE
+            hideActionButtons()
+        }
+
+        binding.cancelSettingsBtn.setOnClickListener {
+            loadUserData()
+            setupUI()
+            hideActionButtons()
         }
 
         binding.weightSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -57,7 +67,7 @@ class SettingsActivity : BaseMenuActivity() {
                 binding.weightSeekBar.progress = validProgress // reset progress if it's below the min
                 binding.weightTitle.text = getString(R.string.weightTitle, validProgress)
                 userData.weight = validProgress
-                binding.confirmSettingsBtn.visibility = View.VISIBLE
+                showActionButtons()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -72,7 +82,7 @@ class SettingsActivity : BaseMenuActivity() {
                 binding.heightSeekBar.progress = validProgress // reset progress if it's below the min
                 binding.heightTitle.text = getString(R.string.heightTitle, validProgress)
                 userData.height = validProgress
-                binding.confirmSettingsBtn.visibility = View.VISIBLE
+                showActionButtons()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -83,14 +93,43 @@ class SettingsActivity : BaseMenuActivity() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val validProgress = if (progress < UserData.MIN_WEIGHT) UserData.MIN_WEIGHT else progress
                 binding.weightGoalSeekBar.progress = validProgress // reset progress if it's below the min
-                binding.weightGoalTitle.text = getString(R.string.weightGoalTitle, validProgress)
+                binding.weightGoalTitle.text = getString(R.string.settings_weight_goal_title, validProgress)
                 userData.goalWeight = validProgress
-                binding.confirmSettingsBtn.visibility = View.VISIBLE
+                showActionButtons()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+
+        binding.logoutButton.setOnClickListener {
+            if (binding.confirmSettingsBtn.visibility == View.VISIBLE) {
+                Toast.makeText(this, "Please, apply settings first.",
+                    Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            // Start LoginActivity and pass a flag to indicate logout
+            val intent = Intent(this@SettingsActivity, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            intent.putExtra("logout", true) // Add an extra flag to indicate logout
+            startActivity(intent)
+
+            // Finish the current activity to prevent going back to it
+            finish()
+        }
+
+        loadAccountSection()
+    }
+
+    private fun showActionButtons() {
+        binding.confirmSettingsBtn.visibility = View.VISIBLE
+        binding.cancelSettingsBtn.visibility = View.VISIBLE
+    }
+
+    private fun hideActionButtons() {
+        binding.confirmSettingsBtn.visibility = View.GONE
+        binding.cancelSettingsBtn.visibility = View.GONE
     }
 
     private fun setupDatePicker() {
@@ -101,7 +140,27 @@ class SettingsActivity : BaseMenuActivity() {
         binding.birthDatePicker.setOnDateChangedListener { _, selectedYear, selectedMonth, selectedDay ->
             val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
             userData.birthDate = selectedDate
-            binding.confirmSettingsBtn.visibility = View.VISIBLE
+            showActionButtons()
+        }
+    }
+
+    private fun loadAccountSection() {
+        val account = FirebaseAuth.getInstance().currentUser
+        if (account != null) {
+            binding.googleAccountEmail.text = account.email
+            getAndLoadUserIcon()
+            binding.googleAccountSection.visibility = View.VISIBLE
+        } else {
+            binding.googleAccountSection.visibility = View.GONE
+        }
+    }
+
+    private fun getAndLoadUserIcon() {
+        val account = FirebaseAuth.getInstance().currentUser
+        if (account != null && account.photoUrl != null) {
+            Glide.with(this)
+                .load(account.photoUrl)
+                .into(binding.googleIcon)
         }
     }
 

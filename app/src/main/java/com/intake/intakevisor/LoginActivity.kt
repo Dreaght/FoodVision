@@ -16,6 +16,7 @@ import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.intake.intakevisor.ui.settings.SettingsActivity
 import com.intake.intakevisor.ui.welcome.WelcomeActivity
 
 class LoginActivity : AppCompatActivity() {
@@ -29,6 +30,14 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
+
+        // Check if this activity was launched due to a logout
+        if (intent.getBooleanExtra("logout", false)) {
+            logOut()
+            // After logging out, relaunch the login flow
+            launchSignInFlow()
+            return // Prevent further execution in onCreate
+        }
 
         // Reset permission denial count if the app was restarted
         permissionDenialCount = 0
@@ -57,6 +66,20 @@ class LoginActivity : AppCompatActivity() {
             // Account doesn't exist, launch sign-in flow
             launchSignInFlow()
         }
+    }
+
+    private fun logOut() {
+        AuthUI.getInstance()
+            .signOut(this)
+            .addOnCompleteListener {
+                // Ensure sign-out from Google account explicitly
+                AuthUI.getInstance()
+                    .delete(this)
+                    .addOnCompleteListener {
+                        // Clear any local user data if needed (optional)
+                        Toast.makeText(this, "Logged out successfully.", Toast.LENGTH_SHORT).show()
+                    }
+            }
     }
 
     private fun launchSignInFlow() {
@@ -179,7 +202,7 @@ class LoginActivity : AppCompatActivity() {
         val preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
         val isFirstRun = preferences.getBoolean("isFirstRun", true)
 
-        if (true) {
+        if (isFirstRun) {
             startActivity(Intent(this, WelcomeActivity::class.java))
 
             // Finish LoginActivity to prevent stacking
@@ -187,8 +210,12 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        val intent = Intent(this, DiaryActivity::class.java)
-        startActivity(intent)
+        if (intent.getBooleanExtra("logout", false)) {
+            startActivity(Intent(this, SettingsActivity::class.java))
+        } else {
+            startActivity(Intent(this, DiaryActivity::class.java))
+        }
+
         finish()
     }
 }

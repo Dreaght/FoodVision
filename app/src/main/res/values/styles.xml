@@ -11,6 +11,11 @@
         <item name="android:elevation">4dp</item>
     </style>
 
+    <style name="GrayCancelButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/gray_cancel_button_bg</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
     <style name="ConfirmButton" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/confirm_button_background</item>
         <item name="android:elevation">4dp</item>
