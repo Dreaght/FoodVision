@@ -41,7 +41,7 @@
         android:orientation="horizontal"
         android:padding="8dp"
         android:background="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@id/menuPanel"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -68,15 +68,5 @@
             android:visibility="visible"
             android:src="@drawable/ic_send" />
     </LinearLayout>
-
-    <!-- Bottom Menu Panel -->
-    <include
-        android:id="@+id/menuPanel"
-        layout="@layout/menu_panel"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

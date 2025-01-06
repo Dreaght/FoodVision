@@ -16,7 +16,7 @@ import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.intake.intakevisor.ui.settings.SettingsActivity
+import com.intake.intakevisor.ui.main.MainActivity
 import com.intake.intakevisor.ui.welcome.WelcomeActivity
 
 class LoginActivity : AppCompatActivity() {
@@ -211,9 +211,11 @@ class LoginActivity : AppCompatActivity() {
         }
 
         if (intent.getBooleanExtra("logout", false)) {
-            startActivity(Intent(this, SettingsActivity::class.java))
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("fragment", "settings")
+            startActivity(intent)
         } else {
-            startActivity(Intent(this, DiaryActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
         }
 
         finish()

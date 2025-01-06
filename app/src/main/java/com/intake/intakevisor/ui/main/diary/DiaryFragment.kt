@@ -1,25 +1,26 @@
-package com.intake.intakevisor
+package com.intake.intakevisor.ui.main.diary
 
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.intake.intakevisor.CameraActivity
+import com.intake.intakevisor.R
 import com.intake.intakevisor.analyse.FoodFragment
 import com.intake.intakevisor.analyse.NutritionInfo
 import com.intake.intakevisor.api.DiaryDatabase
 import com.intake.intakevisor.api.FoodFragmentEntity
 import com.intake.intakevisor.api.LocalDiaryDatabase
 import com.intake.intakevisor.api.LocalDiaryDatabaseImpl
-import com.intake.intakevisor.diary.FoodItem
-import com.intake.intakevisor.diary.FoodItemAdapter
-import com.intake.intakevisor.ui.MenuHelper
+import com.intake.intakevisor.databinding.DiaryFragmentBinding
+import com.intake.intakevisor.ui.main.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -27,22 +28,25 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.ArrayList
+import java.util.Calendar
+import java.util.Locale
+import kotlin.collections.forEach
 
-class DiaryActivity : BaseMenuActivity() {
+class DiaryFragment : Fragment() {
+
+    private var _binding: DiaryFragmentBinding? = null
+    private val binding get() = _binding!!
+
+    lateinit var mainActivity: MainActivity
 
     private lateinit var localDiaryDatabase: DiaryDatabase
-
-    private lateinit var currentDayTextView: TextView
     private val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
     private val currentDay: Calendar = Calendar.getInstance()
-
     private val breakfastItems = mutableListOf<FoodItem>()
     private val lunchItems = mutableListOf<FoodItem>()
     private val dinnerItems = mutableListOf<FoodItem>()
-
     private var currentJob: Job? = null
-
     val sessionFoodFragments = mutableMapOf<String, MutableList<FoodFragment>>()
 
     private val mealTypeMap = mapOf(
@@ -51,68 +55,77 @@ class DiaryActivity : BaseMenuActivity() {
         "dinner" to dinnerItems
     )
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_diary)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = DiaryFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        // Initialize UI components
-        currentDayTextView = findViewById(R.id.currentDay)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mainActivity = requireActivity() as MainActivity
+
+        setupUI()
+    }
+
+    private fun setupUI() {
         updateCurrentDayLabel()
 
-        findViewById<Button>(R.id.previousDay).setOnClickListener {
+        binding.previousDay.setOnClickListener {
             changeDay(-1)
         }
 
-        findViewById<Button>(R.id.nextDay).setOnClickListener {
+        binding.nextDay.setOnClickListener {
             changeDay(1)
         }
 
         // Initialize RecyclerViews
-        setupRecyclerView(R.id.breakfastFoodList, breakfastItems)
-        setupRecyclerView(R.id.lunchFoodList, lunchItems)
-        setupRecyclerView(R.id.dinnerFoodList, dinnerItems)
+        setupRecyclerView(binding.breakfastFoodList, breakfastItems)
+        setupRecyclerView(binding.lunchFoodList, lunchItems)
+        setupRecyclerView(binding.dinnerFoodList, dinnerItems)
 
-        findViewById<Button>(R.id.addBreakfast).setOnClickListener {
+        binding.addBreakfast.setOnClickListener {
             openCameraActivity("breakfast")
             refreshFoodData()
         }
-        findViewById<Button>(R.id.addLunch).setOnClickListener {
+        binding.addLunch.setOnClickListener {
             openCameraActivity("lunch")
             refreshFoodData()
         }
-        findViewById<Button>(R.id.addDinner).setOnClickListener {
+        binding.addDinner.setOnClickListener {
             openCameraActivity("dinner")
             refreshFoodData()
         }
 
-        val db = LocalDiaryDatabase.getDatabase(applicationContext)
+        val db = LocalDiaryDatabase.getDatabase(mainActivity.applicationContext)
         localDiaryDatabase = LocalDiaryDatabaseImpl(db.diaryDao())
 
         handleFoodFragments()
 
-        val selectedDate = intent.getStringExtra("selected_date")
+        val selectedDate = mainActivity.intent.getStringExtra("selected_date")
         if (selectedDate != null) {
             setDayFromSelectedDate(selectedDate)
         }
 
-//        changeDay(0)
         refreshFoodData()
     }
 
-    private fun setDayFromSelectedDate(selectedDate: String) {
-        try {
-            // Parse the selected_date string into a Date object
-            val parsedDate = dateFormatter.parse(selectedDate) ?: return
+    private fun updateCurrentDayLabel() {
+        val today = Calendar.getInstance()
+        val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_MONTH, -1) }
 
-            // Update the currentDay Calendar instance
-            currentDay.time = parsedDate
-
-            // Update the UI and load data for the selected date
-            updateCurrentDayLabel()
-            refreshFoodData()
-        } catch (e: Exception) {
-            Log.e("DiaryActivity", "Error parsing selected_date: $selectedDate", e)
+        binding.currentDay.text = when {
+            isSameDay(currentDay, today) -> getString(R.string.today)
+            isSameDay(currentDay, yesterday) -> getString(R.string.yesterday)
+            else -> dateFormatter.format(currentDay.time)
         }
+    }
+
+    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 
     private fun changeDay(offset: Int) {
@@ -149,23 +162,12 @@ class DiaryActivity : BaseMenuActivity() {
         refreshFoodData()
     }
 
-    private fun updateCurrentDayLabel() {
-        val today = Calendar.getInstance()
-        val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_MONTH, -1) }
-
-        currentDayTextView.text = when {
-            isSameDay(currentDay, today) -> getString(R.string.today)
-            isSameDay(currentDay, yesterday) -> getString(R.string.yesterday)
-            else -> dateFormatter.format(currentDay.time)
-        }
-    }
-
     private fun refreshFoodData() {
         // Clear existing data
         mealTypeMap.values.forEach { it.clear() }
 
         // Notify the adapters that the data set has changed
-        runOnUiThread {
+        mainActivity.runOnUiThread {
             findRecyclerView("breakfast").adapter?.notifyDataSetChanged()
             findRecyclerView("lunch").adapter?.notifyDataSetChanged()
             findRecyclerView("dinner").adapter?.notifyDataSetChanged()
@@ -173,6 +175,15 @@ class DiaryActivity : BaseMenuActivity() {
 
         // Load data for the new day
         initializeFromDatabase()
+    }
+
+    private fun findRecyclerView(mealType: String): RecyclerView {
+        return when (mealType) {
+            "breakfast" -> binding.breakfastFoodList
+            "lunch" -> binding.lunchFoodList
+            "dinner" -> binding.dinnerFoodList
+            else -> throw IllegalArgumentException("Unknown meal type: $mealType")
+        }
     }
 
     private fun initializeFromDatabase() {
@@ -215,9 +226,23 @@ class DiaryActivity : BaseMenuActivity() {
         )
     }
 
+    private fun createFoodItem(foodFragment: FoodFragment): FoodItem {
+        val bitmap = BitmapFactory.decodeByteArray(foodFragment.image, 0, foodFragment.image.size)
+        val nutritionInfo = foodFragment.nutritionInfo
+        return FoodItem(
+            name = "${nutritionInfo.name} ${nutritionInfo.calories}", // Use the name from the FoodFragmentEntity
+            image = bitmap // Use the bitmap image
+        )
+    }
+
+    private fun setupRecyclerView(recyclerView: RecyclerView, foodItems: MutableList<FoodItem>) {
+        recyclerView.layoutManager = LinearLayoutManager(mainActivity)
+        recyclerView.adapter = FoodItemAdapter(foodItems)
+    }
+
     private fun openCameraActivity(mealType: String) {
         val uniqueSessionId = System.currentTimeMillis().toString()
-        val intent = Intent(this, CameraActivity::class.java)
+        val intent = Intent(mainActivity, CameraActivity::class.java)
         intent.putExtra("meal_type", mealType)
         intent.putExtra("selected_date", dateFormatter.format(currentDay.time)) // Pass formatted date
         intent.putExtra("session_id", uniqueSessionId)
@@ -229,27 +254,27 @@ class DiaryActivity : BaseMenuActivity() {
 
     private fun handleFoodFragments() {
         val foodFragments = retrieveFoodFragmentsFromIntent() // Assuming this can return null
-        val mealType = intent.getStringExtra("meal_type") ?: return
-        val selectedDate = intent.getStringExtra("selected_date") ?: return
-        val sessionId = intent.getStringExtra("session_id") ?: return  // Ensures sessionId is not null
+        val mealType = mainActivity.intent.getStringExtra("meal_type") ?: return
+        val selectedDate = mainActivity.intent.getStringExtra("selected_date") ?: return
+        val sessionId = mainActivity.intent.getStringExtra("session_id") ?: return  // Ensures sessionId is not null
 
         // Check if foodFragments is not null before proceeding
         foodFragments?.forEach { foodFragment ->
             // Ensure sessionId is not null and that the session exists in the map
             // Coroutine to check and update the database asynchronously
-                val isAdded = sessionFoodFragments[sessionId]?.contains(foodFragment) == true
+            val isAdded = sessionFoodFragments[sessionId]?.contains(foodFragment) == true
 
-                // Add to database if not already added
-                if (!isAdded) {
-                    saveFoodFragmentToDatabase(selectedDate, mealType, foodFragment)
+            // Add to database if not already added
+            if (!isAdded) {
+                saveFoodFragmentToDatabase(selectedDate, mealType, foodFragment)
 
-                    sessionFoodFragments[sessionId]?.add(foodFragment) ?: run {
-                        // If the session doesn't exist, create the list and add the food fragment
-                        sessionFoodFragments[sessionId] = mutableListOf(foodFragment)
-                    }
-                } else {
-                    // Update or remove logic can go here if necessary
+                sessionFoodFragments[sessionId]?.add(foodFragment) ?: run {
+                    // If the session doesn't exist, create the list and add the food fragment
+                    sessionFoodFragments[sessionId] = mutableListOf(foodFragment)
                 }
+            } else {
+                // Update or remove logic can go here if necessary
+            }
         }
 
         // Now handle deletion of fragments from the session
@@ -259,6 +284,28 @@ class DiaryActivity : BaseMenuActivity() {
                 deleteFoodFragmentFromDatabase(selectedDate, mealType, fragment)
             }
         }
+    }
+
+    private fun retrieveFoodFragmentsFromIntent(): ArrayList<FoodFragment>? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mainActivity.intent.getParcelableArrayListExtra("food_fragments", FoodFragment::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            mainActivity.intent.getParcelableArrayListExtra("food_fragments")
+        }
+    }
+
+    private fun convertFoodFragmentToFragmentEntity(
+        selectedDate: String, mealType: String, foodFragment: FoodFragment): FoodFragmentEntity
+    {
+        return FoodFragmentEntity(
+            dateMealTypeKey = "$selectedDate-$mealType",
+            date = selectedDate,
+            mealType = mealType,
+            image = foodFragment.image,
+            name = foodFragment.nutritionInfo.name,
+            calories = foodFragment.nutritionInfo.calories
+        )
     }
 
     private fun saveFoodFragmentToDatabase(
@@ -292,59 +339,19 @@ class DiaryActivity : BaseMenuActivity() {
         }
     }
 
-    private fun convertFoodFragmentToFragmentEntity(
-        selectedDate: String, mealType: String, foodFragment: FoodFragment): FoodFragmentEntity
-    {
-        return FoodFragmentEntity(
-            dateMealTypeKey = "$selectedDate-$mealType",
-            date = selectedDate,
-            mealType = mealType,
-            image = foodFragment.image,
-            name = foodFragment.nutritionInfo.name,
-            calories = foodFragment.nutritionInfo.calories
-        )
-    }
+    private fun setDayFromSelectedDate(selectedDate: String) {
+        try {
+            // Parse the selected_date string into a Date object
+            val parsedDate = dateFormatter.parse(selectedDate) ?: return
 
-    private fun addFoodItemToMeal(mealType: String, foodItem: FoodItem) {
-        mealTypeMap[mealType]?.add(foodItem)
-        findRecyclerView(mealType).adapter?.notifyItemInserted(mealTypeMap[mealType]?.size?.minus(1) ?: 0)
-    }
+            // Update the currentDay Calendar instance
+            currentDay.time = parsedDate
 
-    private fun retrieveFoodFragmentsFromIntent(): ArrayList<FoodFragment>? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableArrayListExtra("food_fragments", FoodFragment::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableArrayListExtra("food_fragments")
+            // Update the UI and load data for the selected date
+            updateCurrentDayLabel()
+            refreshFoodData()
+        } catch (e: Exception) {
+            Log.e("DiaryActivity", "Error parsing selected_date: $selectedDate", e)
         }
-    }
-
-    private fun setupRecyclerView(recyclerViewId: Int, foodItems: MutableList<FoodItem>) {
-        val recyclerView: RecyclerView = findViewById(recyclerViewId)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = FoodItemAdapter(foodItems)
-    }
-
-    private fun findRecyclerView(mealType: String): RecyclerView {
-        return when (mealType) {
-            "breakfast" -> findViewById(R.id.breakfastFoodList)
-            "lunch" -> findViewById(R.id.lunchFoodList)
-            "dinner" -> findViewById(R.id.dinnerFoodList)
-            else -> throw IllegalArgumentException("Unknown meal type: $mealType")
-        }
-    }
-
-    private fun createFoodItem(foodFragment: FoodFragment): FoodItem {
-        val bitmap = BitmapFactory.decodeByteArray(foodFragment.image, 0, foodFragment.image.size)
-        val nutritionInfo = foodFragment.nutritionInfo
-        return FoodItem(
-            name = "${nutritionInfo.name} ${nutritionInfo.calories}", // Use the name from the FoodFragmentEntity
-            image = bitmap // Use the bitmap image
-        )
-    }
-
-    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 }

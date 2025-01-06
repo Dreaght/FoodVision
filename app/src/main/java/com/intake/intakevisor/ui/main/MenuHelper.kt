@@ -1,50 +1,33 @@
-package com.intake.intakevisor.ui
+package com.intake.intakevisor.ui.main
 
 import android.app.Activity
-import android.content.Intent
 import androidx.appcompat.content.res.AppCompatResources
-import com.intake.intakevisor.ui.chat.ChatActivity
-import com.intake.intakevisor.DiaryActivity
-import com.intake.intakevisor.ui.feedback.FeedbackActivity
 import com.intake.intakevisor.databinding.MenuPanelBinding
-import com.intake.intakevisor.ui.settings.SettingsActivity
 import com.intake.intakevisor.R
+import com.intake.intakevisor.ui.main.chat.ChatFragment
+import com.intake.intakevisor.ui.main.diary.DiaryFragment
+import com.intake.intakevisor.ui.main.feedback.FeedbackFragment
+import com.intake.intakevisor.ui.main.settings.SettingsFragment
 
 class MenuHelper(private val activity: Activity) {
 
     fun setupMenu(binding: MenuPanelBinding) {
-        // Set active menu item based on current activity
-        when (activity) {
-            is DiaryActivity -> activateDiary(binding)
-            is FeedbackActivity -> activateFeedback(binding)
-            is ChatActivity -> activateChat(binding)
-            is SettingsActivity -> activateSettings(binding)
-        }
-
         // Set up click listeners
         binding.btnDiary.setOnClickListener {
-            activity.startActivity(Intent(activity, DiaryActivity::class.java))
-            activity.finish()
-            activateDiary(binding)
+            (activity as MainActivity).loadFragment(DiaryFragment())
         }
         binding.btnFeedback.setOnClickListener {
-            activity.startActivity(Intent(activity, FeedbackActivity::class.java))
-            activity.finish()
-            activateFeedback(binding)
+            (activity as MainActivity).loadFragment(FeedbackFragment())
         }
         binding.btnChat.setOnClickListener {
-            activity.startActivity(Intent(activity, ChatActivity::class.java))
-            activity.finish()
-            activateChat(binding)
+            (activity as MainActivity).loadFragment(ChatFragment())
         }
         binding.btnSettings.setOnClickListener {
-            activity.startActivity(Intent(activity, SettingsActivity::class.java))
-            activity.finish()
-            activateSettings(binding)
+            (activity as MainActivity).loadFragment(SettingsFragment())
         }
     }
 
-    private fun activateDiary(binding: MenuPanelBinding) {
+    fun activateDiary(binding: MenuPanelBinding) {
         // Set selected/unselected background for Diary button (ConstraintLayout)
         binding.btnDiary.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.selected_activity_background)
         binding.btnFeedback.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.unselected_activity_background)
@@ -52,21 +35,21 @@ class MenuHelper(private val activity: Activity) {
         binding.btnSettings.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.unselected_activity_background)
     }
 
-    private fun activateFeedback(binding: MenuPanelBinding) {
+    fun activateFeedback(binding: MenuPanelBinding) {
         binding.btnDiary.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.unselected_activity_background)
         binding.btnFeedback.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.selected_activity_background)
         binding.btnChat.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.unselected_activity_background)
         binding.btnSettings.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.unselected_activity_background)
     }
 
-    private fun activateChat(binding: MenuPanelBinding) {
+    fun activateChat(binding: MenuPanelBinding) {
         binding.btnDiary.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.unselected_activity_background)
         binding.btnFeedback.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.unselected_activity_background)
         binding.btnChat.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.selected_activity_background)
         binding.btnSettings.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.unselected_activity_background)
     }
 
-    private fun activateSettings(binding: MenuPanelBinding) {
+    fun activateSettings(binding: MenuPanelBinding) {
         binding.btnDiary.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.unselected_activity_background)
         binding.btnFeedback.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.unselected_activity_background)
         binding.btnChat.background = AppCompatResources.getDrawable(activity.applicationContext, R.drawable.unselected_activity_background)

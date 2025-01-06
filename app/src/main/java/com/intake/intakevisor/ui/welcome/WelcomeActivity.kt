@@ -2,22 +2,15 @@ package com.intake.intakevisor.ui.welcome
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import com.intake.intakevisor.BaseActivity
-import com.intake.intakevisor.DiaryActivity
-import com.intake.intakevisor.R
 import com.intake.intakevisor.databinding.ActivityWelcomeBinding
+import com.intake.intakevisor.ui.main.MainActivity
 
 class WelcomeActivity : BaseActivity() {
 
     private lateinit var binding: ActivityWelcomeBinding
 
     var userData = UserData()
-
-    // SharedPreferences setup
-    private val sharedPreferences by lazy {
-        getSharedPreferences("UserPreferences", MODE_PRIVATE)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,14 +20,6 @@ class WelcomeActivity : BaseActivity() {
         loadUserData() // Load user data on activity start
 
         loadFragment(WelcomePropertiesFragment())
-    }
-
-    // Method to switch fragments
-    fun loadFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .addToBackStack(null) // Enables back navigation
-            .commit()
     }
 
     private fun saveUserData() {
@@ -64,7 +49,7 @@ class WelcomeActivity : BaseActivity() {
         val preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
         preferences.edit().putBoolean("isFirstRun", false).apply()
 
-        startActivity(Intent(this, DiaryActivity::class.java))
+        startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 }

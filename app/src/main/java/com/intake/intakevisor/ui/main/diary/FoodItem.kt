@@ -1,4 +1,4 @@
-package com.intake.intakevisor.diary
+package com.intake.intakevisor.ui.main.diary
 
 import android.graphics.Bitmap
 

@@ -1,30 +1,41 @@
-package com.intake.intakevisor.ui.chat
+package com.intake.intakevisor.ui.main.chat
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.intake.intakevisor.BaseMenuActivity
-import com.intake.intakevisor.databinding.ActivityChatBinding
+import com.intake.intakevisor.databinding.ChatFragmentBinding
+import com.intake.intakevisor.ui.main.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ChatActivity : BaseMenuActivity() {
-    private lateinit var binding: ActivityChatBinding
+class ChatFragment : Fragment() {
+
+    private var _binding: ChatFragmentBinding? = null
+    private val binding get() = _binding!!
+
+    lateinit var mainActivity: MainActivity
 
     private val messages = mutableListOf<Message>()
     private lateinit var adapter: MessageAdapter
-
     private val bot = ReceiverBot()
-
-    // Flag to track if a new response from bot is needed after each user message
     private var isNewResponseNeeded = true
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityChatBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = ChatFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mainActivity = requireActivity() as MainActivity
 
         setupUI()
         setupRecyclerView(binding.messagesRecyclerView, messages)
@@ -35,7 +46,7 @@ class ChatActivity : BaseMenuActivity() {
             val message = binding.messageInput.text.toString()
             if (message.isNotEmpty()) {
                 binding.messageInput.text.clear()
-                messages.add(Message(Message.SENDER_USER, message))
+                messages.add(Message(Message.Companion.SENDER_USER, message))
                 adapter.notifyItemInserted(messages.size - 1)
                 // After inserting the new message, scroll to the last position to keep the chat at the bottom
                 binding.messagesRecyclerView.scrollToPosition(messages.size - 1)
@@ -55,14 +66,15 @@ class ChatActivity : BaseMenuActivity() {
                 // If we need a new response (which means the last message is from the user)
                 if (isNewResponseNeeded) {
                     // Add a new assistant message for the response
-                    messages.add(Message(Message.SENDER_ASSISTANT, fragment))
+                    messages.add(Message(Message.Companion.SENDER_ASSISTANT, fragment))
                     isNewResponseNeeded = false
                 } else {
                     // Update the existing assistant message with the new fragment
-                    val lastMessageIndex = messages.indexOfLast { it.sender == Message.SENDER_ASSISTANT }
+                    val lastMessageIndex = messages.indexOfLast { it.sender == Message.Companion.SENDER_ASSISTANT }
                     if (lastMessageIndex != -1) {
                         val updatedMessage = messages[lastMessageIndex].text + " $fragment"
-                        messages[lastMessageIndex] = Message(Message.SENDER_ASSISTANT, updatedMessage)
+                        messages[lastMessageIndex] =
+                            Message(Message.Companion.SENDER_ASSISTANT, updatedMessage)
                     }
                 }
 
@@ -78,7 +90,7 @@ class ChatActivity : BaseMenuActivity() {
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView, foodItems: MutableList<Message>) {
-        val layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(mainActivity)
         layoutManager.stackFromEnd = true  // Start from the bottom of the RecyclerView
         recyclerView.layoutManager = layoutManager
         adapter = MessageAdapter(foodItems)

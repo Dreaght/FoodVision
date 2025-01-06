@@ -1,4 +1,4 @@
-package com.intake.intakevisor.ui.chat
+package com.intake.intakevisor.ui.main.chat
 
 import kotlinx.coroutines.*
 import kotlin.random.Random

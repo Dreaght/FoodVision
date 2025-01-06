@@ -1,4 +1,4 @@
-package com.intake.intakevisor.ui.chat
+package com.intake.intakevisor.ui.main.chat
 
 import android.view.LayoutInflater
 import android.view.View

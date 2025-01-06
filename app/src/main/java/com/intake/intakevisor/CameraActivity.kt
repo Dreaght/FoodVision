@@ -22,6 +22,7 @@ import com.intake.intakevisor.analyse.Frame
 import com.intake.intakevisor.analyse.camera.CameraController
 import com.intake.intakevisor.analyse.util.RegionRenderer
 import com.intake.intakevisor.analyse.widget.TransparentOverlayView
+import com.intake.intakevisor.ui.main.MainActivity
 import java.io.ByteArrayOutputStream
 
 class CameraActivity : AppCompatActivity() {
@@ -209,7 +210,7 @@ class CameraActivity : AppCompatActivity() {
             }
 
             // Pass food fragments and meal type to DiaryActivity
-            val intent = Intent(this, DiaryActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             intent.putParcelableArrayListExtra("food_fragments", foodFragments)
             intent.putExtra("meal_type", mealType)  // Pass meal type to DiaryActivity
             intent.putExtra("selected_date", selectedDate)
