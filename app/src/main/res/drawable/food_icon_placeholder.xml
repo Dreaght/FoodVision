@@ -4,7 +4,7 @@
     <!-- Background -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#00BCD4"/> <!-- Light gray -->
+            <solid android:color="#FFFFFF"/> <!-- Light gray -->
         </shape>
     </item>
 </layer-list>

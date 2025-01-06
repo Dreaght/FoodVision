@@ -31,4 +31,6 @@
     <string name="gender_name_man">I\'m a male</string>
     <string name="gender_name_woman">I\'m a female</string>
     <string name="welcome_age_title">I was born in…</string>
+    <string name="selectedWeekLabel">Selected week: %s</string>
+    <string name="weekSelectorLabel">Select a week</string>
 </resources>

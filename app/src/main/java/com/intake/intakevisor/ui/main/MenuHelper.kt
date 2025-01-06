@@ -9,21 +9,21 @@ import com.intake.intakevisor.ui.main.diary.DiaryFragment
 import com.intake.intakevisor.ui.main.feedback.FeedbackFragment
 import com.intake.intakevisor.ui.main.settings.SettingsFragment
 
-class MenuHelper(private val activity: Activity) {
+class MenuHelper(private val activity: MainActivity) {
 
     fun setupMenu(binding: MenuPanelBinding) {
         // Set up click listeners
         binding.btnDiary.setOnClickListener {
-            (activity as MainActivity).loadFragment(DiaryFragment())
+            activity.loadFragment(DiaryFragment())
         }
         binding.btnFeedback.setOnClickListener {
-            (activity as MainActivity).loadFragment(FeedbackFragment())
+            activity.loadFragment(FeedbackFragment())
         }
         binding.btnChat.setOnClickListener {
-            (activity as MainActivity).loadFragment(ChatFragment())
+            activity.loadFragment(ChatFragment())
         }
         binding.btnSettings.setOnClickListener {
-            (activity as MainActivity).loadFragment(SettingsFragment())
+            activity.loadFragment(SettingsFragment())
         }
     }
 

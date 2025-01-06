@@ -16,6 +16,8 @@ open class BaseMenuActivity : BaseActivity() {
     private lateinit var binding: MenuPanelBinding
     private lateinit var menuHelper: MenuHelper
 
+    lateinit var currentFragment: Fragment
+
     override fun onContentChanged() {
         super.onContentChanged()
 
@@ -23,7 +25,7 @@ open class BaseMenuActivity : BaseActivity() {
         val menuPanel = findViewById<View>(R.id.menuPanel)
         if (menuPanel != null) {
             binding = MenuPanelBinding.bind(menuPanel)
-            menuHelper = MenuHelper(this)
+            menuHelper = MenuHelper(this as MainActivity)
             menuHelper.setupMenu(binding)
         }
     }
@@ -36,11 +38,13 @@ open class BaseMenuActivity : BaseActivity() {
     }
 
     override fun loadFragment(fragment: Fragment) {
+        currentFragment = fragment
         activateItemInMenu(fragment)
         super.loadFragment(fragment)
     }
 
     fun activateItemInMenu(fragment: Fragment) {
+        currentFragment = fragment
         when (fragment) {
             is DiaryFragment -> menuHelper.activateDiary(binding)
             is FeedbackFragment -> menuHelper.activateFeedback(binding)

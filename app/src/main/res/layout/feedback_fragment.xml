@@ -4,7 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.feedback.FeedbackActivity">
+    tools:context=".ui.main.MainActivity">
+
+    <TextView
+        android:id="@+id/tv_selected_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selected week will appear here"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
 
     <TextView
         android:id="@+id/calories_analysed_label"
