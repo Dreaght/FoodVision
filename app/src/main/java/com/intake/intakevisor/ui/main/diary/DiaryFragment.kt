@@ -125,6 +125,7 @@ class DiaryFragment : Fragment() {
         val selectedDate = mainActivity.intent.getStringExtra("selected_date")
         if (selectedDate != null) {
             setDayFromSelectedDate(selectedDate)
+            mainActivity.intent.removeExtra("selected_date")
         }
 
         refreshFoodData()
