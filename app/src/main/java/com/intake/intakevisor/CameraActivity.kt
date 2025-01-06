@@ -216,6 +216,8 @@ class CameraActivity : AppCompatActivity() {
             intent.putExtra("selected_date", selectedDate)
             intent.putExtra("session_id", sessionId)
             startActivity(intent)
+
+            finish()
         }
     }
 
