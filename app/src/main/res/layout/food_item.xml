@@ -6,14 +6,14 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="0dp"
-    android:background="@drawable/selected_activity_background"
+    android:background="@drawable/gray_rounded_square"
     android:layout_marginBottom="1dp">
 
     <!-- Food Icon (Rounded) -->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/foodIcon"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:scaleType="centerCrop"
         android:contentDescription="@string/food_icon"
         app:shapeAppearanceOverlay="@style/RoundedImageStyle" />

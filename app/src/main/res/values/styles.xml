@@ -22,7 +22,7 @@
     </style>
 
     <style name="BlackConfirmButton" parent="Widget.AppCompat.Button">
-            <item name="android:background">@drawable/black_confirm_button_background</item>
+            <item name="android:background">@drawable/light_gray_confirm_button_background</item>
             <item name="android:elevation">4dp</item>
     </style>
 
@@ -45,8 +45,14 @@
 
     <style name="RoundedImageStyle" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">30%</item>
+        <item name="cornerSize">35%</item>
     </style>
 
+    <style name="RoundedDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowMinWidthMajor">70%</item>
+        <item name="android:windowMinWidthMinor">70%</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 
 </resources>

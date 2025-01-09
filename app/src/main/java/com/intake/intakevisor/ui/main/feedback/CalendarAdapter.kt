@@ -43,12 +43,12 @@ class CalendarAdapter(
 
             // Set circular background for start and end dates
             if (day != null && (day == selectedStartDate || day == selectedEndDate)) {
-                textView.setBackgroundResource(R.drawable.circle_background)
+                textView.setBackgroundResource(R.drawable.gray_circle_background)
             }
             // Set a different background for dates in the range
             else if (day != null && selectedStartDate != null && selectedEndDate != null &&
                 day.isAfter(selectedStartDate) && day.isBefore(selectedEndDate)) {
-                textView.setBackgroundColor(0xFFFFFFCE.toInt()) // Pastel-yellow color for the range
+                textView.setBackgroundResource(R.drawable.light_gray_circle_background)
             }
             // Default background
             else {

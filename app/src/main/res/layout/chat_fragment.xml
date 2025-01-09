@@ -54,7 +54,7 @@
             android:layout_weight="1"
             android:background="@drawable/rounded_input_background"
             android:hint="@string/message_input_hint"
-            android:fontFamily="@font/sf_pro_text_thin"
+            android:fontFamily="@font/sf_pro_bold"
             android:paddingHorizontal="16dp"
             android:imeOptions="actionSend"
             android:inputType="text"

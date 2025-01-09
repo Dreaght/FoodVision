@@ -32,7 +32,7 @@
     <string name="gender_name_woman">I\'m a female</string>
     <string name="welcome_age_title">I was born in…</string>
     <string name="selectedWeekLabel">Selected days range: %s</string>
-    <string name="calendar_days_selector">Please select a report days range.</string>
+    <string name="calendar_days_selector">Select a report days range.</string>
     <string name="month_year_text_label">%s %d</string>
     <string name="previous_month_label">&lt;</string>
     <string name="next_month_label">&gt;</string>

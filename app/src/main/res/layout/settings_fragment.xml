@@ -146,15 +146,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="@id/logoutButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/logoutButton"
         android:layout_marginStart="30dp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/googleIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:shapeAppearanceOverlay="@style/RoundedImageStyle"
             android:src="@drawable/ic_google_icon" />
 
         <TextView
@@ -164,8 +166,8 @@
             android:layout_marginStart="8dp"
             android:text="example@gmail.com"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            android:fontFamily="@font/sf_pro_text_thin" />
+            android:textSize="15sp"
+            android:fontFamily="@font/sf_pro_bold" />
     </LinearLayout>
 
     <!-- Logout Button -->

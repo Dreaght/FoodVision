@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@drawable/gray_rounded_square"
     android:padding="20dp">
 
     <TextView
@@ -28,34 +29,32 @@
 
     <Button
         android:id="@+id/previous_month_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/previous_month_label"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:fontFamily="@font/sf_pro_text"
         android:layout_marginEnd="5dp"
         android:layout_marginTop="-50dp"
-        android:background="@drawable/day_switch_button_background"
+        android:background="@drawable/back_arrow_circleless"
         app:layout_constraintEnd_toEndOf="@id/guideline"
         app:layout_constraintTop_toBottomOf="@id/calendar_view" />
 
     <Button
         android:id="@+id/next_month_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/next_month_label"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:fontFamily="@font/sf_pro_text"
         android:layout_marginStart="5dp"
         android:layout_marginTop="-50dp"
-        android:background="@drawable/day_switch_button_background"
+        android:background="@drawable/next_arrow_circleless"
         app:layout_constraintStart_toEndOf="@id/guideline"
         app:layout_constraintTop_toBottomOf="@id/calendar_view" />
 
     <Button
         android:id="@+id/calendar_done_btn"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/black_confirm_button_background"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="-0dp"
+        android:background="@drawable/dark_gray_checkmark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/previous_month_btn" />
