@@ -1,100 +1,124 @@
 package com.intake.intakevisor.ui.main.feedback
 
 import android.content.DialogInterface
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.intake.intakevisor.databinding.ReportSelectDateBinding
-import java.text.SimpleDateFormat
-import java.util.Calendar
+import androidx.recyclerview.widget.GridLayoutManager
+import com.intake.intakevisor.databinding.CalendarDaySelectorBinding
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.format.TextStyle
 import java.util.Locale
+import com.intake.intakevisor.R
 
+@RequiresApi(Build.VERSION_CODES.O)
 class ReportDateDialogFragment : DialogFragment() {
 
-    private var _binding: ReportSelectDateBinding? = null
+    private var _binding: CalendarDaySelectorBinding? = null
     private val binding get() = _binding!!
-    private var onWeekSelected: ((String) -> Unit)? = null
-    private var onDismissListener: (() -> Unit)? = null
 
-    private var isWeekSelected = false // Track whether a week was selected
+    private var chosenDaysRange: ReportDaysRange? = null
+    private var isDaysRangeSelected = false
+
+    private var onDaysRangeChosen: ((ReportDaysRange) -> Unit)? = null
+    private lateinit var calendarAdapter: CalendarAdapter
+
+    private var currentMonth: YearMonth = YearMonth.now() // Keep track of the displayed month
+
+    private var selectedStartDate: LocalDate? = null
+    private var selectedEndDate: LocalDate? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = ReportSelectDateBinding.inflate(inflater, container, false)
+        _binding = CalendarDaySelectorBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Handle back button press to dismiss the dialog and go back
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    dismiss()
-                }
+        val monthYearText = binding.calendarView.monthYearText
+        val calendarRecyclerView = binding.calendarView.calendarRecyclerView
+
+        // Initialize the calendar view
+        updateCalendar()
+
+        calendarRecyclerView.layoutManager = GridLayoutManager(requireContext(), 7)
+
+        binding.previousMonthBtn.setOnClickListener {
+            currentMonth = currentMonth.minusMonths(1)
+            updateCalendar()
+        }
+
+        binding.nextMonthBtn.setOnClickListener {
+            currentMonth = currentMonth.plusMonths(1)
+            updateCalendar()
+        }
+
+        binding.calendarDoneBtn.setOnClickListener {
+            if (selectedStartDate != null && selectedEndDate != null) {
+                chosenDaysRange = ReportDaysRange(selectedStartDate!!, selectedEndDate!!)
+                isDaysRangeSelected = true
+                dismiss()
+                onDaysRangeChosen?.invoke(chosenDaysRange!!)
             }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateCalendar() {
+        val monthYearText = binding.calendarView.monthYearText
+        val calendarRecyclerView = binding.calendarView.calendarRecyclerView
+
+        // Update month-year text
+        monthYearText.text = getString(
+            R.string.month_year_text_label,
+            currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault()), currentMonth.year
         )
 
-        // Generate past weeks and setup RecyclerView
-        val pastWeeks = generatePastWeeks()
-        val adapter = WeekAdapter(pastWeeks) { selectedWeek ->
-            isWeekSelected = true // Mark that a week was selected
-            onWeekSelected?.invoke(selectedWeek)
-            dismiss() // Close the dialog after selection
+        // Generate days for the current month
+        val days = generateCalendarDays(currentMonth)
+        calendarAdapter = CalendarAdapter(days, selectedStartDate, selectedEndDate) { start, end ->
+            selectedStartDate = start
+            selectedEndDate = end
         }
 
-        binding.weekPickerRecycler.layoutManager = LinearLayoutManager(requireContext())
-        binding.weekPickerRecycler.adapter = adapter
+        calendarRecyclerView.adapter = calendarAdapter
     }
 
-    private fun generatePastWeeks(): List<String> {
-        val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()) // Example: "Jan 01, 2023"
-        val calendar = Calendar.getInstance()
-        val weeks = mutableListOf<String>()
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun generateCalendarDays(month: YearMonth): List<LocalDate?> {
+        val daysInMonth = month.lengthOfMonth()
+        val firstDayOfMonth = month.atDay(1).dayOfWeek.value % 7 // Adjust for Sunday=0, Saturday=6
+        val totalCells = 42 // 6 rows × 7 days
+        val calendarDays = mutableListOf<LocalDate?>()
 
-        for (i in 0..12) {
-            val weekStart = calendar.clone() as Calendar
-            weekStart.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
-
-            val weekEnd = calendar.clone() as Calendar
-            weekEnd.set(Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek + 6)
-
-            val week = "${dateFormat.format(weekStart.time)} - ${dateFormat.format(weekEnd.time)}"
-            weeks.add(week)
-
-            calendar.add(Calendar.WEEK_OF_YEAR, -1) // Go to the previous week
+        for (i in 1..totalCells) {
+            if (i <= firstDayOfMonth || i > firstDayOfMonth + daysInMonth) {
+                calendarDays.add(null) // Empty cell
+            } else {
+                calendarDays.add(month.atDay(i - firstDayOfMonth))
+            }
         }
-
-        return weeks
+        return calendarDays
     }
 
-    fun setOnWeekSelectedListener(listener: (String) -> Unit) {
-        onWeekSelected = listener
-    }
-
-    fun setOnDismissListener(listener: () -> Unit) {
-        onDismissListener = listener
+    fun setOnDaysRangeChosenListener(listener: (ReportDaysRange) -> Unit) {
+        onDaysRangeChosen = listener
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        // Pop back stack only if no week was selected
-        if (!isWeekSelected) {
-            Log.d("ReportDateDialogFragment", "No week selected, navigating back.")
+        if (!isDaysRangeSelected) {
             parentFragmentManager.popBackStack()
-        } else {
-            Log.d("ReportDateDialogFragment", "Week selected, no navigation back.")
         }
         super.onDismiss(dialog)
-        onDismissListener?.invoke()
     }
 
     override fun onDestroyView() {

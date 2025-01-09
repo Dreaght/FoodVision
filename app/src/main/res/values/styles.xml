@@ -43,4 +43,10 @@
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
+    <style name="RoundedImageStyle" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">30%</item>
+    </style>
+
+
 </resources>

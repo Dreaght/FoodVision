@@ -10,105 +10,30 @@
         android:id="@+id/tv_selected_week"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Selected week will appear here"
+        android:gravity="center"
         android:textSize="16sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
 
-    <TextView
-        android:id="@+id/calories_analysed_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/grid_nutrients"
-        app:layout_constraintStart_toStartOf="@id/grid_nutrients"
-        android:layout_marginStart="5dp"
-        android:text="Calories analysed: "
-        android:textSize="20dp"
-        android:fontFamily="casual" />
-
-    <TextView
-        android:id="@+id/calories_amount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/calories_analysed_label"
-        app:layout_constraintStart_toEndOf="@id/calories_analysed_label"
-        app:layout_constraintTop_toTopOf="@id/calories_analysed_label"
-        android:text="1000"
-        android:textSize="25dp"
-        android:textStyle="bold"
-        android:fontFamily="casual" />
-
-    <!-- Nutrients Report Section -->
-    <GridLayout
-        android:id="@+id/grid_nutrients"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="3"
-        android:rowCount="4"
-        android:layout_margin="5dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <include
+        android:id="@+id/fragment_nutrition_report"
+        layout="@layout/fragment_nutrition_report"
+        app:layout_constraintTop_toBottomOf="@id/tv_selected_week"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <include
-            android:id="@+id/carb_box"
-            layout="@layout/nutrition_box"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_columnWeight="1" />
-
-        <include
-            android:id="@+id/nutrition_box2"
-            layout="@layout/nutrition_box"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_columnWeight="1" />
-
-        <include
-            android:id="@+id/nutrition_box3"
-            layout="@layout/nutrition_box"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_columnWeight="1" />
-
-        <include
-            android:id="@+id/nutrition_box4"
-            layout="@layout/nutrition_box"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_columnWeight="1" />
-
-        <include
-            android:id="@+id/nutrition_box5"
-            layout="@layout/nutrition_box"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_columnWeight="1" />
-
-        <include
-            android:id="@+id/nutrition_box6"
-            layout="@layout/nutrition_box"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_columnWeight="1" />
-
-    </GridLayout>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/download_report_button" />
 
     <Button
+        android:id="@+id/download_report_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/grid_nutrients"
-        app:layout_constraintEnd_toEndOf="@id/grid_nutrients"
-        android:layout_marginEnd="5dp"
-        android:text="Download"/>
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/download_report_btn"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

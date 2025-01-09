@@ -95,4 +95,7 @@ dependencies {
     implementation(libs.gson)
 
     implementation(libs.androidx.core.splashscreen)
+
+    implementation("com.google.android.material:material:1.9.0")
+
 }

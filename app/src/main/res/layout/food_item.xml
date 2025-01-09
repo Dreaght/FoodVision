@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="0dp"
-    android:background="?android:attr/selectableItemBackground"
+    android:background="@drawable/selected_activity_background"
     android:layout_marginBottom="1dp">
 
-    <!-- Food Icon -->
-    <ImageView
+    <!-- Food Icon (Rounded) -->
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/foodIcon"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:scaleType="centerCrop"
-        android:contentDescription="@string/food_icon" />
+        android:contentDescription="@string/food_icon"
+        app:shapeAppearanceOverlay="@style/RoundedImageStyle" />
 
     <!-- Food Name -->
     <TextView
@@ -23,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="16sp"
+        android:fontFamily="@font/sf_pro_text_thin"
         android:layout_gravity="center_vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"

@@ -18,7 +18,7 @@
         android:layout_marginTop="30dp"
         android:text="@string/settings_header"
         android:textSize="30sp"
-        android:fontFamily="casual" />
+        android:fontFamily="@font/sf_pro_text" />
 
     <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/weightSeekBar"
@@ -37,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/settingsWeightTitle"
-        android:fontFamily="casual"
+        android:fontFamily="@font/sf_pro_bold"
         android:textSize="15sp"
         app:layout_constraintTop_toBottomOf="@+id/weightSeekBar"
         app:layout_constraintStart_toStartOf="@+id/weightSeekBar"
@@ -62,7 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/settingsHeightTitle"
-        android:fontFamily="casual"
+        android:fontFamily="@font/sf_pro_bold"
         android:textSize="15sp"
         app:layout_constraintTop_toBottomOf="@+id/heightSeekBar"
         app:layout_constraintStart_toStartOf="@+id/heightSeekBar"
@@ -74,7 +74,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/birthDateTitle"
-        android:fontFamily="casual"
+        android:fontFamily="@font/sf_pro_text"
         android:textSize="20sp"
         app:layout_constraintTop_toBottomOf="@+id/heightTitle"
         app:layout_constraintStart_toStartOf="@+id/heightSeekBar"
@@ -110,7 +110,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/settings_weight_goal_title"
-        android:fontFamily="casual"
+        android:fontFamily="@font/sf_pro_bold"
         android:textSize="15sp"
         app:layout_constraintTop_toBottomOf="@+id/weightGoalSeekBar"
         app:layout_constraintStart_toStartOf="@+id/weightGoalSeekBar"
@@ -165,7 +165,7 @@
             android:text="example@gmail.com"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:fontFamily="casual" />
+            android:fontFamily="@font/sf_pro_text_thin" />
     </LinearLayout>
 
     <!-- Logout Button -->

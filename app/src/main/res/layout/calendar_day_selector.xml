@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/sf_pro_bold"
+        android:gravity="center"
+        android:text="@string/calendar_days_selector"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@id/calendar_view"
+        app:layout_constraintStart_toStartOf="@id/calendar_view"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/calendar_view"
+        layout="@layout/calendar_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_title" />
+
+    <Button
+        android:id="@+id/previous_month_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/previous_month_label"
+        android:fontFamily="@font/sf_pro_text"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="-50dp"
+        android:background="@drawable/day_switch_button_background"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/calendar_view" />
+
+    <Button
+        android:id="@+id/next_month_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/next_month_label"
+        android:fontFamily="@font/sf_pro_text"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="-50dp"
+        android:background="@drawable/day_switch_button_background"
+        app:layout_constraintStart_toEndOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/calendar_view" />
+
+    <Button
+        android:id="@+id/calendar_done_btn"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/black_confirm_button_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/previous_month_btn" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

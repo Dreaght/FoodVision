@@ -25,6 +25,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:text="@string/currentDay"
             android:textSize="18sp"
+            android:fontFamily="@font/sf_pro_text"
             android:textColor="#000000"
             android:textStyle="bold" />
 
@@ -37,6 +38,7 @@
             app:layout_constraintTop_toTopOf="@+id/currentDay"
             android:background="@drawable/day_switch_button_background"
             android:text="@string/previous_day_label"
+            android:fontFamily="@font/sf_pro_bold"
             android:textSize="16sp"
             android:textColor="#000000" />
 
@@ -49,6 +51,7 @@
             app:layout_constraintTop_toTopOf="@+id/currentDay"
             android:background="@drawable/day_switch_button_background"
             android:text="@string/next_day_label"
+            android:fontFamily="@font/sf_pro_bold"
             android:textSize="16sp"
             android:textColor="#000000" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -65,24 +68,41 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <!-- Breakfast Section -->
-        <TextView
-            android:id="@+id/breakfastTitle"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/breakfast"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:padding="10dp"
-            android:background="#D3D3D3" />
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/addBreakfast"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:background="#F0F0F0"
-            android:padding="0dp"
-            android:text="@string/addFood"
-            android:textColor="#000000" />
+            <TextView
+                android:id="@+id/breakfastTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/breakfast"
+                android:fontFamily="@font/sf_pro_text"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:padding="3dp"
+                android:background="#D3D3D3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/addBreakfast"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_weight="1" />
+
+            <Button
+                android:id="@+id/addBreakfast"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="#F0F0F0"
+                android:textSize="12sp"
+                android:text="@string/addFood"
+                android:fontFamily="@font/sf_pro_bold"
+                android:textColor="#000000"
+                app:layout_constraintStart_toEndOf="@+id/breakfastTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_weight="0.67" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/breakfastFoodList"
@@ -90,25 +110,42 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <!-- Lunch Section -->
-        <TextView
-            android:id="@+id/lunchTitle"
+        <!-- Repeat for Lunch Section -->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/lunch"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:padding="10dp"
-            android:background="#D3D3D3" />
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/addLunch"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:background="#F0F0F0"
-            android:padding="0dp"
-            android:text="@string/addFood"
-            android:textColor="#000000" />
+            <TextView
+                android:id="@+id/lunchTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/lunch"
+                android:fontFamily="@font/sf_pro_text"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:padding="3dp"
+                android:background="#D3D3D3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/addLunch"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_weight="1" />
+
+            <Button
+                android:id="@+id/addLunch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="#F0F0F0"
+                android:textSize="12sp"
+                android:text="@string/addFood"
+                android:fontFamily="@font/sf_pro_bold"
+                android:textColor="#000000"
+                app:layout_constraintStart_toEndOf="@+id/lunchTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_weight="0.67" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/lunchFoodList"
@@ -117,30 +154,48 @@
             android:layout_weight="1" />
 
         <!-- Dinner Section -->
-        <TextView
-            android:id="@+id/dinnerTitle"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/dinner"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:padding="10dp"
-            android:background="#D3D3D3" />
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/addDinner"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:background="#F0F0F0"
-            android:padding="0dp"
-            android:text="@string/addFood"
-            android:textColor="#000000" />
+            <TextView
+                android:id="@+id/dinnerTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/dinner"
+                android:fontFamily="@font/sf_pro_text"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:padding="3dp"
+                android:background="#D3D3D3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/addDinner"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_weight="1" />
+
+            <Button
+                android:id="@+id/addDinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="#F0F0F0"
+                android:textSize="12sp"
+                android:text="@string/addFood"
+                android:fontFamily="@font/sf_pro_bold"
+                android:textColor="#000000"
+                app:layout_constraintStart_toEndOf="@+id/dinnerTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_weight="0.67" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/dinnerFoodList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
+
     </LinearLayout>
 
 
