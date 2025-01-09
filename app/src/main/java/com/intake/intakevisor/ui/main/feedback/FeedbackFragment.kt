@@ -17,18 +17,17 @@ import androidx.lifecycle.lifecycleScope
 import com.intake.intakevisor.databinding.FeedbackFragmentBinding
 import com.intake.intakevisor.ui.main.MainActivity
 import com.intake.intakevisor.R
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.time.format.DateTimeFormatter
 
 class FeedbackFragment : Fragment() {
     private var _binding: FeedbackFragmentBinding? = null
     private val binding get() = _binding!!
 
+    private var reportJob: Job? = null // Job to track the coroutine
+
     lateinit var mainActivity: MainActivity
 
-    // Flag to track if a week has been selected
     private var isWeekSelected = false
 
     private val reportAPI = ReportAPI()
@@ -47,7 +46,6 @@ class FeedbackFragment : Fragment() {
             val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
             val cameraCutout = insets.displayCutout?.safeInsetTop ?: 0
 
-            // Set margin to max(status bar height, cutout height, default 20dp)
             val marginTop = maxOf(statusBarHeight, cameraCutout, dpToPx(20))
 
             view.updateLayoutParams<ConstraintLayout.LayoutParams> {
@@ -71,25 +69,25 @@ class FeedbackFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupUI() {
-        // Open the dialog only if a week has not been selected
         if (!isWeekSelected) {
             val existingDialog =
                 parentFragmentManager.findFragmentByTag("ReportDateDialogFragment") as? ReportDateDialogFragment
-            if (existingDialog == null) { // Prevent multiple dialogs
+            if (existingDialog == null) {
                 val dialog = ReportDateDialogFragment()
 
                 dialog.setOnDaysRangeChosenListener { chosenDaysRange ->
-                    // Handle the chosen days range
                     Log.d("FeedbackFragment", "Chosen days range: $chosenDaysRange")
-                    isWeekSelected = true // Set the flag to true
-                    binding.tvSelectedWeek.text = getString(
-                        R.string.selectedWeekLabel,
-                        "${chosenDaysRange.start.format(
-                            DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                        )} - ${chosenDaysRange.end.format(
-                            DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                        )}"
-                    )
+                    isWeekSelected = true
+                    if (isAdded) { // Check if the fragment is still attached
+                        binding.tvSelectedWeek.text = getString(
+                            R.string.selectedWeekLabel,
+                            "${chosenDaysRange.start.format(
+                                DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                            )} - ${chosenDaysRange.end.format(
+                                DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                            )}"
+                        )
+                    }
                     loadReportFor(chosenDaysRange)
                 }
 
@@ -105,27 +103,44 @@ class FeedbackFragment : Fragment() {
     private fun loadReportFor(reportDaysRange: ReportDaysRange) {
         showLoading(true)
 
-        lifecycleScope.launch {
-            val reportImage = withContext(Dispatchers.IO) {
-                reportAPI.fetchReport(reportDaysRange)
+        reportJob = lifecycleScope.launch {
+            try {
+                val reportImage = withContext(Dispatchers.IO) {
+                    reportAPI.fetchReport(reportDaysRange)
+                }
+                if (isAdded && _binding != null) { // Ensure fragment is attached and binding is valid
+                    showReport(reportImage)
+                }
+            } catch (e: CancellationException) {
+                Log.d("FeedbackFragment", "Loading canceled.")
+            } catch (e: Exception) {
+                Log.e("FeedbackFragment", "Error loading report: ${e.message}")
+            } finally {
+                if (isAdded && _binding != null) {
+                    showLoading(false)
+                }
             }
-            showReport(reportImage)
         }
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.fragmentNutritionReport.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-        binding.fragmentNutritionReport.reportImageView.visibility = if (isLoading) View.GONE else View.VISIBLE
+        if (_binding != null) { // Check if binding is valid
+            binding.fragmentNutritionReport.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.fragmentNutritionReport.reportImageView.visibility = if (isLoading) View.GONE else View.VISIBLE
+        }
     }
 
     private fun showReport(bitmap: Bitmap) {
-        binding.fragmentNutritionReport.reportImageView.setImageBitmap(bitmap)
-        binding.downloadReportButton.visibility = View.VISIBLE
-        showLoading(false)
+        if (_binding != null) { // Check if binding is valid
+            binding.fragmentNutritionReport.reportImageView.setImageBitmap(bitmap)
+            binding.downloadReportButton.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroyView() {
-        // Dismiss any existing dialog when the fragment view is destroyed
+        // Cancel any ongoing coroutine to prevent crashes
+        reportJob?.cancel()
+
         val existingDialog =
             parentFragmentManager.findFragmentByTag("ReportDateDialogFragment") as? ReportDateDialogFragment
         existingDialog?.dismissAllowingStateLoss()
