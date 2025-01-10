@@ -8,15 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.intake.intakevisor.R
 import com.intake.intakevisor.databinding.FeedbackFragmentBinding
 import com.intake.intakevisor.ui.main.MainActivity
-import com.intake.intakevisor.R
 import kotlinx.coroutines.*
 import java.time.format.DateTimeFormatter
 
@@ -25,10 +21,10 @@ class FeedbackFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var reportJob: Job? = null // Job to track the coroutine
+    private var dialog: ReportDateDialogFragment? = null
 
     lateinit var mainActivity: MainActivity
-
-    private var isWeekSelected = false
+    var isWeekSelected = false
 
     private val reportAPI = ReportAPI()
 
@@ -42,19 +38,6 @@ class FeedbackFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.tvSelectedWeek) { view, insets ->
-            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-            val cameraCutout = insets.displayCutout?.safeInsetTop ?: 0
-
-            val marginTop = maxOf(statusBarHeight, cameraCutout, dpToPx(20))
-
-            view.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                topMargin = marginTop
-            }
-
-            insets
-        }
-
         super.onViewCreated(view, savedInstanceState)
         mainActivity = requireActivity() as MainActivity
         mainActivity.activateItemInMenu(this)
@@ -62,42 +45,41 @@ class FeedbackFragment : Fragment() {
         setupUI()
     }
 
-    private fun dpToPx(dp: Int): Int {
-        val density = resources.displayMetrics.density
-        return (dp * density).toInt()
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun setupUI() {
+    fun setupUI() {
+        if (!isAdded) {
+            return
+        }
+
         if (!isWeekSelected) {
+            // Check if the dialog is already being shown
             val existingDialog =
-                parentFragmentManager.findFragmentByTag("ReportDateDialogFragment") as? ReportDateDialogFragment
-            if (existingDialog == null) {
-                val dialog = ReportDateDialogFragment()
-
-                dialog.setOnDaysRangeChosenListener { chosenDaysRange ->
-                    Log.d("FeedbackFragment", "Chosen days range: $chosenDaysRange")
-                    isWeekSelected = true
-                    if (isAdded) { // Check if the fragment is still attached
-                        binding.tvSelectedWeek.text = getString(
-                            R.string.selectedWeekLabel,
-                            "${chosenDaysRange.start.format(
-                                DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                            )} - ${chosenDaysRange.end.format(
-                                DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                            )}"
-                        )
-                    }
-                    loadReportFor(chosenDaysRange)
-                }
-
-                dialog.show(parentFragmentManager, "ReportDateDialogFragment")
+                childFragmentManager.findFragmentByTag("ReportDateDialogFragment") as? ReportDateDialogFragment
+            if (existingDialog == null || !existingDialog.isAdded) {
+                showDialog()
             } else {
                 Log.d("FeedbackFragment", "Dialog already shown.")
             }
-        } else {
-            Log.d("FeedbackFragment", "Dialog not shown because a week is already selected.")
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun showDialog() {
+        val dialog = ReportDateDialogFragment()
+        dialog.apply {
+            setOnDaysRangeChosenListener { chosenDaysRange ->
+                    Log.d("FeedbackFragment", "Chosen days range: $chosenDaysRange")
+                    isWeekSelected = true
+                    binding.tvSelectedWeek.text = getString(
+                        R.string.selectedWeekLabel,
+                        "${chosenDaysRange.start.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))} - ${chosenDaysRange.end.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}"
+                    )
+                    loadReportFor(chosenDaysRange)
+                (activity as MainActivity).feedbackDialogShown = false
+            }
+        }
+
+        dialog.show(childFragmentManager, "ReportDateDialogFragment")
     }
 
     private fun loadReportFor(reportDaysRange: ReportDaysRange) {
@@ -137,16 +119,15 @@ class FeedbackFragment : Fragment() {
         }
     }
 
+//    override fun onResume() {
+//        Log.d("FeedbackFragment", "onResume called")
+//        setupUI()
+//        super.onResume()
+//    }
+
     override fun onDestroyView() {
-        // Cancel any ongoing coroutine to prevent crashes
-        reportJob?.cancel()
-
-        val existingDialog =
-            parentFragmentManager.findFragmentByTag("ReportDateDialogFragment") as? ReportDateDialogFragment
-        existingDialog?.dismissAllowingStateLoss()
-
         super.onDestroyView()
         _binding = null
-        isWeekSelected = false
+        reportJob?.cancel()
     }
 }

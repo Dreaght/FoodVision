@@ -26,7 +26,6 @@ import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 class DiaryFragment : Fragment() {
 
     private var _binding: DiaryFragmentBinding? = null
