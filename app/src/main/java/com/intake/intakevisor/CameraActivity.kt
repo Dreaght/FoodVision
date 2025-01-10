@@ -23,6 +23,7 @@ import com.intake.intakevisor.analyse.camera.CameraController
 import com.intake.intakevisor.analyse.util.RegionRenderer
 import com.intake.intakevisor.analyse.widget.TransparentOverlayView
 import com.intake.intakevisor.ui.main.MainActivity
+import com.intake.intakevisor.util.BitmapUtil
 import java.io.ByteArrayOutputStream
 
 class CameraActivity : AppCompatActivity() {
@@ -147,6 +148,7 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun updateUIForImageSelection() {
+        cameraPreview.visibility = View.GONE
         galleryPreview.visibility = View.GONE
         captureButton.visibility = View.GONE
         cancelButton.visibility = View.VISIBLE
@@ -154,13 +156,19 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun processImageFromGallery(imageUri: Uri) {
-        val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-        foodProcessor = FoodProcessor(Frame(bitmap))
+        val originalBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
 
+        val displayMetrics = resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+        val screenHeight = displayMetrics.heightPixels
+
+        val resizedBitmap = BitmapUtil.resizeBitmapToFitBounds(originalBitmap, screenWidth, screenHeight)
+
+        foodProcessor = FoodProcessor(Frame(resizedBitmap))
         val detectedFoods = foodProcessor?.detectFoods() ?: emptyList()
         regionRenderer.setRegions(detectedFoods)
 
-        transparentOverlay.setBitmap(bitmap)
+        transparentOverlay.setBitmap(resizedBitmap)
     }
 
     private fun detectTappedRegion(x: Float, y: Float): FoodRegion? {
@@ -184,6 +192,7 @@ class CameraActivity : AppCompatActivity() {
 
     private fun updateUIForCaptureMode() {
         captureMode = true
+        cameraPreview.visibility = View.VISIBLE
         captureButton.visibility = View.GONE
         cancelButton.visibility = View.VISIBLE
         confirmButton.visibility = View.GONE
@@ -205,6 +214,7 @@ class CameraActivity : AppCompatActivity() {
 
     private fun resetUIForDefaultMode() {
         captureMode = false
+        cameraPreview.visibility = View.VISIBLE
         captureButton.visibility = View.VISIBLE
         cancelButton.visibility = View.GONE
         confirmButton.visibility = View.GONE
