@@ -17,14 +17,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.intake.intakevisor.analyse.FoodFragment
-import com.intake.intakevisor.analyse.FoodProcessor
+import com.intake.intakevisor.analyse.DummyFoodProcessor
 import com.intake.intakevisor.analyse.FoodRegion
 import com.intake.intakevisor.analyse.Frame
 import com.intake.intakevisor.analyse.camera.CameraController
 import com.intake.intakevisor.analyse.util.RegionRenderer
 import com.intake.intakevisor.analyse.widget.TransparentOverlayView
 import com.intake.intakevisor.databinding.ActivityCameraBinding
-import com.intake.intakevisor.ui.main.MainActivity
 import com.intake.intakevisor.util.BitmapUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -44,7 +43,7 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var cancelButton: Button
     private lateinit var confirmButton: Button
     private lateinit var regionRenderer: RegionRenderer
-    private var foodProcessor: FoodProcessor? = null
+    private var foodProcessor: DummyFoodProcessor? = null
 
     private val GALLERY_REQUEST_CODE = 1001
 
@@ -52,7 +51,6 @@ class CameraActivity : AppCompatActivity() {
 
     private var mealType: String? = null
     private var selectedDate: String? = null
-    private var sessionId: String? = null
 
     private var regionsJob: Job? = null
 
@@ -76,7 +74,6 @@ class CameraActivity : AppCompatActivity() {
     private fun initializeIntentData() {
         mealType = intent.getStringExtra("meal_type")
         selectedDate = intent.getStringExtra("selected_date")
-        sessionId = intent.getStringExtra("session_id")
 
         Log.d("CameraActivity", "received selected date: $mealType $selectedDate")
     }
@@ -113,10 +110,15 @@ class CameraActivity : AppCompatActivity() {
 
     private fun handleOverlayTouch(event: MotionEvent) {
         if (event.action == MotionEvent.ACTION_DOWN) {
-            val tappedRegion = detectTappedRegion(event.x, event.y)
-            tappedRegion?.let {
-                regionRenderer.toggleRegionSelection(it)
-                updateConfirmButtonState()
+            val tappedRegions = detectTappedRegions(event.x, event.y)
+
+            if (tappedRegions != null) {
+                for (tappedRegion in tappedRegions) {
+                    tappedRegion.let {
+                        regionRenderer.toggleRegionSelection(it)
+                        updateConfirmButtonState()
+                    }
+                }
             }
 
             transparentOverlay.performClick()
@@ -178,8 +180,8 @@ class CameraActivity : AppCompatActivity() {
         processCapturedImage(Frame(resizedBitmap))
     }
 
-    private fun detectTappedRegion(x: Float, y: Float): FoodRegion? {
-        return regionRenderer.getDetectedRegions().firstOrNull { region ->
+    private fun detectTappedRegions(x: Float, y: Float): List<FoodRegion>? {
+        return regionRenderer.getDetectedRegions().filter { region ->
             region.bounds.contains(x.toInt(), y.toInt())
         }
     }
@@ -207,16 +209,16 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun processCapturedImage(frame: Frame) {
-        foodProcessor = FoodProcessor(frame)
         transparentOverlay.clearBitMap()
         transparentOverlay.setBitmap(frame.image as Bitmap)
 
-        renderRegions()
+        renderRegions(frame)
     }
 
-    private fun renderRegions() {
+    private fun renderRegions(frame: Frame) {
         showLoading(true)
         regionsJob = lifecycleScope.launch {
+            foodProcessor = DummyFoodProcessor(frame)
             val detectedFoods = withContext(Dispatchers.IO) {
                 foodProcessor?.detectFoods() ?: emptyList()
             }
@@ -279,13 +281,12 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun startDiary(foodFragments: ArrayList<FoodFragment>) {
-        val intent = Intent(this, MainActivity::class.java).apply {
+        val resultIntent = Intent().apply {
             putParcelableArrayListExtra("food_fragments", foodFragments)
             putExtra("meal_type", mealType)
             putExtra("selected_date", selectedDate)
-            putExtra("session_id", sessionId)
         }
-        startActivity(intent)
+        setResult(RESULT_OK, resultIntent)
         finish()
     }
 

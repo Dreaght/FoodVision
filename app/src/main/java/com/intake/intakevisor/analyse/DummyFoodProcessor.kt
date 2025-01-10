@@ -5,7 +5,7 @@ import android.graphics.Rect
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
-class FoodProcessor(val frame: Frame) : FoodDetector {
+class DummyFoodProcessor(frame: Frame) : FoodDetector {
 
     private val image = frame.image as Bitmap
 
