@@ -3,6 +3,7 @@ package com.intake.intakevisor.ui.main.feedback
 import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,8 @@ import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 import com.intake.intakevisor.R
+import com.intake.intakevisor.ui.main.MainActivity
+import com.intake.intakevisor.ui.main.diary.DiaryFragment
 
 @RequiresApi(Build.VERSION_CODES.O)
 class ReportDateDialogFragment : DialogFragment() {
@@ -128,10 +131,10 @@ class ReportDateDialogFragment : DialogFragment() {
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        if (!isDaysRangeSelected) {
-            parentFragmentManager.popBackStack()
-        }
         super.onDismiss(dialog)
+        if (!isDaysRangeSelected) {
+            (activity as MainActivity).loadFragment((activity as MainActivity).previousFragment)
+        }
     }
 
     override fun onDestroyView() {

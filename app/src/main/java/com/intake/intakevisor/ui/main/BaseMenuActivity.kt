@@ -16,6 +16,7 @@ open class BaseMenuActivity : BaseActivity() {
     private lateinit var binding: MenuPanelBinding
     private lateinit var menuHelper: MenuHelper
 
+    lateinit var previousFragment: Fragment
     lateinit var currentFragment: Fragment
 
     override fun onContentChanged() {
@@ -38,9 +39,31 @@ open class BaseMenuActivity : BaseActivity() {
     }
 
     override fun loadFragment(fragment: Fragment) {
+        if (::currentFragment.isInitialized && fragment::class == currentFragment::class) {
+            // If the new fragment is of the same type as the current one, return early to prevent duplication
+            return
+        }
+
+        val transaction = supportFragmentManager.beginTransaction()
+
+        if (::currentFragment.isInitialized) {
+            // Hide the current fragment instead of removing it
+            transaction.hide(currentFragment)
+            previousFragment = currentFragment
+        }
+
+        if (!fragment.isAdded) {
+            // Add the new fragment if it's not already added
+            transaction.add(R.id.fragment_container, fragment)
+        } else {
+            // Show the existing fragment
+            transaction.show(fragment)
+        }
+
+        transaction.commit()
+
         currentFragment = fragment
         activateItemInMenu(fragment)
-        super.loadFragment(fragment)
     }
 
     fun activateItemInMenu(fragment: Fragment) {

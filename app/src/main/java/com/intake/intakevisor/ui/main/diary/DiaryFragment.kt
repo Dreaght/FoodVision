@@ -68,6 +68,7 @@ class DiaryFragment : Fragment() {
         initializeCameraActivityLauncher()
         setupUI()
         loadFoodDataFromDatabase()
+        changeDay(0)
     }
 
     private fun initializeCameraActivityLauncher() {

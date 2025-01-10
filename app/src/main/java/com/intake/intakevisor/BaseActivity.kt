@@ -27,7 +27,7 @@ open class BaseActivity : AppCompatActivity() {
     open fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
-            .addToBackStack(null) // Enables back navigation
+            .addToBackStack(fragment::class.java.name) // Enables back navigation
             .commit()
     }
 
