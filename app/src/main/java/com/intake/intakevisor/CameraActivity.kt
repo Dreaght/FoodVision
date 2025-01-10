@@ -14,6 +14,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.intake.intakevisor.analyse.FoodFragment
 import com.intake.intakevisor.analyse.FoodProcessor
@@ -22,11 +23,18 @@ import com.intake.intakevisor.analyse.Frame
 import com.intake.intakevisor.analyse.camera.CameraController
 import com.intake.intakevisor.analyse.util.RegionRenderer
 import com.intake.intakevisor.analyse.widget.TransparentOverlayView
+import com.intake.intakevisor.databinding.ActivityCameraBinding
 import com.intake.intakevisor.ui.main.MainActivity
 import com.intake.intakevisor.util.BitmapUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 
 class CameraActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityCameraBinding
 
     private lateinit var cameraPreview: TextureView
     private lateinit var transparentOverlay: TransparentOverlayView
@@ -46,9 +54,12 @@ class CameraActivity : AppCompatActivity() {
     private var selectedDate: String? = null
     private var sessionId: String? = null
 
+    private var regionsJob: Job? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_camera)
+        binding = ActivityCameraBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initializeIntentData()
         initializeUIElements()
@@ -71,12 +82,12 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun initializeUIElements() {
-        cameraPreview = findViewById(R.id.cameraPreview)
-        transparentOverlay = findViewById(R.id.transparent_overlay)
-        galleryPreview = findViewById(R.id.gallery_preview)
-        captureButton = findViewById(R.id.capture_button)
-        cancelButton = findViewById(R.id.cancel_button)
-        confirmButton = findViewById(R.id.confirm_button)
+        cameraPreview = binding.cameraPreview
+        transparentOverlay = binding.transparentOverlay
+        galleryPreview = binding.galleryPreview
+        captureButton = binding.captureButton
+        cancelButton = binding.cancelButton
+        confirmButton = binding.confirmButton
         regionRenderer = RegionRenderer(transparentOverlay)
     }
 
@@ -164,11 +175,7 @@ class CameraActivity : AppCompatActivity() {
 
         val resizedBitmap = BitmapUtil.resizeBitmapToFitBounds(originalBitmap, screenWidth, screenHeight)
 
-        foodProcessor = FoodProcessor(Frame(resizedBitmap))
-        val detectedFoods = foodProcessor?.detectFoods() ?: emptyList()
-        regionRenderer.setRegions(detectedFoods)
-
-        transparentOverlay.setBitmap(resizedBitmap)
+        processCapturedImage(Frame(resizedBitmap))
     }
 
     private fun detectTappedRegion(x: Float, y: Float): FoodRegion? {
@@ -201,10 +208,28 @@ class CameraActivity : AppCompatActivity() {
 
     private fun processCapturedImage(frame: Frame) {
         foodProcessor = FoodProcessor(frame)
-        val detectedFoods = foodProcessor?.detectFoods() ?: emptyList()
-        regionRenderer.setRegions(detectedFoods)
         transparentOverlay.clearBitMap()
         transparentOverlay.setBitmap(frame.image as Bitmap)
+
+        renderRegions()
+    }
+
+    private fun renderRegions() {
+        showLoading(true)
+        regionsJob = lifecycleScope.launch {
+            val detectedFoods = withContext(Dispatchers.IO) {
+                foodProcessor?.detectFoods() ?: emptyList()
+            }
+
+            if (captureMode) {
+                regionRenderer.setRegions(detectedFoods)
+                showLoading(false)
+            }
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun handleCancelButton() {
@@ -226,6 +251,8 @@ class CameraActivity : AppCompatActivity() {
         regionRenderer.clearRegions()
         transparentOverlay.clearBitMap()
         foodProcessor = null
+        showLoading(false)
+        regionsJob?.cancel()
     }
 
     private fun handleConfirmButton() {
@@ -313,5 +340,10 @@ class CameraActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (!captureMode) cameraController.resume()
+    }
+
+    override fun onDestroy() {
+        regionsJob?.cancel()
+        super.onDestroy()
     }
 }

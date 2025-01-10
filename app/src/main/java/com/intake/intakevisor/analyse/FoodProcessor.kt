@@ -2,13 +2,14 @@ package com.intake.intakevisor.analyse
 
 import android.graphics.Bitmap
 import android.graphics.Rect
+import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 class FoodProcessor(val frame: Frame) : FoodDetector {
 
     private val image = frame.image as Bitmap
 
-    override fun detectFoods(): List<FoodRegion> {
+    override suspend fun detectFoods(): List<FoodRegion> {
         // Get the frame dimensions
         val frameWidth = image.width
         val frameHeight = image.height
@@ -23,6 +24,8 @@ class FoodProcessor(val frame: Frame) : FoodDetector {
             val fragment = cropBitmap(image, rect)
             FoodRegion(rect, fragment, NutritionInfo("Sample Food", 100))
         }
+
+        delay(1000)
 
         return foodRegions
     }
