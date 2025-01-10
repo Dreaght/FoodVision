@@ -19,10 +19,10 @@ import com.intake.intakevisor.CameraActivity
 import com.intake.intakevisor.R
 import com.intake.intakevisor.analyse.FoodFragment
 import com.intake.intakevisor.analyse.NutritionInfo
-import com.intake.intakevisor.api.DiaryDatabase
-import com.intake.intakevisor.api.FoodFragmentEntity
-import com.intake.intakevisor.api.LocalDiaryDatabase
-import com.intake.intakevisor.api.LocalDiaryDatabaseImpl
+import com.intake.intakevisor.db.DiaryDatabase
+import com.intake.intakevisor.db.FoodFragmentEntity
+import com.intake.intakevisor.db.LocalDiaryDatabase
+import com.intake.intakevisor.db.LocalDiaryDatabaseImpl
 import com.intake.intakevisor.databinding.DiaryFragmentBinding
 import com.intake.intakevisor.ui.main.MainActivity
 import kotlinx.coroutines.CoroutineScope

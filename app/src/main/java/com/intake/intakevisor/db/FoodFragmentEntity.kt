@@ -1,4 +1,4 @@
-package com.intake.intakevisor.api
+package com.intake.intakevisor.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -1,4 +1,4 @@
-package com.intake.intakevisor.api
+package com.intake.intakevisor.db
 
 interface DiaryDatabase {
     suspend fun insertFoodFragment(date: String, mealType: String, food: FoodFragmentEntity)

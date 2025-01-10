@@ -1,4 +1,4 @@
-package com.intake.intakevisor.api
+package com.intake.intakevisor.db
 
 import android.content.Context
 import androidx.room.Database

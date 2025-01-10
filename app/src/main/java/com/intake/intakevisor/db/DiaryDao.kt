@@ -1,4 +1,4 @@
-package com.intake.intakevisor.api
+package com.intake.intakevisor.db
 
 import androidx.room.Dao
 import androidx.room.Delete

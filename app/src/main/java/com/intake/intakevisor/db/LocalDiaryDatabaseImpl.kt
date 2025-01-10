@@ -1,4 +1,4 @@
-package com.intake.intakevisor.api
+package com.intake.intakevisor.db
 
 class LocalDiaryDatabaseImpl(private val diaryDao: DiaryDao) : DiaryDatabase {
     // Insert a FoodFragmentEntity
