@@ -21,10 +21,11 @@ class FeedbackFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var reportJob: Job? = null // Job to track the coroutine
-    private var dialog: ReportDateDialogFragment? = null
 
     lateinit var mainActivity: MainActivity
     var isWeekSelected = false
+
+    private var isDialogShown = false // Flag to track dialog state
 
     private val reportAPI = ReportAPI()
 
@@ -51,35 +52,35 @@ class FeedbackFragment : Fragment() {
             return
         }
 
-        if (!isWeekSelected) {
-            // Check if the dialog is already being shown
-            val existingDialog =
-                childFragmentManager.findFragmentByTag("ReportDateDialogFragment") as? ReportDateDialogFragment
-            if (existingDialog == null || !existingDialog.isAdded) {
-                showDialog()
-            } else {
-                Log.d("FeedbackFragment", "Dialog already shown.")
-            }
+        if (!isWeekSelected && !isDialogShown) { // Ensure the dialog isn't already shown
+            showDialog()
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun showDialog() {
+        isDialogShown = true // Set the flag to true before showing the dialog
+
         val dialog = ReportDateDialogFragment()
         dialog.apply {
             setOnDaysRangeChosenListener { chosenDaysRange ->
-                    Log.d("FeedbackFragment", "Chosen days range: $chosenDaysRange")
-                    isWeekSelected = true
-                    binding.tvSelectedWeek.text = getString(
-                        R.string.selectedWeekLabel,
-                        "${chosenDaysRange.start.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))} - ${chosenDaysRange.end.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}"
-                    )
-                    loadReportFor(chosenDaysRange)
+                Log.d("FeedbackFragment", "Chosen days range: $chosenDaysRange")
+                isWeekSelected = true
+                binding.tvSelectedWeek.text = getString(
+                    R.string.selectedWeekLabel,
+                    "${chosenDaysRange.start.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))} - ${chosenDaysRange.end.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}"
+                )
+                loadReportFor(chosenDaysRange)
                 (activity as MainActivity).feedbackDialogShown = false
             }
         }
 
         dialog.show(childFragmentManager, "ReportDateDialogFragment")
+
+        // Reset the flag when the dialog is dismissed
+        dialog.setOnDismissListener {
+            isDialogShown = false
+        }
     }
 
     private fun loadReportFor(reportDaysRange: ReportDaysRange) {
@@ -118,12 +119,6 @@ class FeedbackFragment : Fragment() {
             binding.downloadReportButton.visibility = View.VISIBLE
         }
     }
-
-//    override fun onResume() {
-//        Log.d("FeedbackFragment", "onResume called")
-//        setupUI()
-//        super.onResume()
-//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

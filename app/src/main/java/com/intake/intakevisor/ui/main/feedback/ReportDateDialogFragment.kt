@@ -1,9 +1,7 @@
 package com.intake.intakevisor.ui.main.feedback
 
-import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,8 +14,11 @@ import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 import com.intake.intakevisor.R
+import android.animation.ObjectAnimator
+import android.content.DialogInterface
+import android.util.Log
+import android.view.animation.AccelerateDecelerateInterpolator
 import com.intake.intakevisor.ui.main.MainActivity
-import com.intake.intakevisor.ui.main.diary.DiaryFragment
 
 @RequiresApi(Build.VERSION_CODES.O)
 class ReportDateDialogFragment : DialogFragment() {
@@ -29,6 +30,8 @@ class ReportDateDialogFragment : DialogFragment() {
     private var isDaysRangeSelected = false
 
     private var onDaysRangeChosen: ((ReportDaysRange) -> Unit)? = null
+    private var onDismissListener: (() -> Unit)? = null
+
     private lateinit var calendarAdapter: CalendarAdapter
 
     private var currentMonth: YearMonth = YearMonth.now() // Keep track of the displayed month
@@ -130,10 +133,47 @@ class ReportDateDialogFragment : DialogFragment() {
         onDaysRangeChosen = listener
     }
 
+    fun setOnDismissListener(listener: () -> Unit) {
+        onDismissListener = listener
+    }
+
     override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        if (!isDaysRangeSelected) {
-            (activity as MainActivity).loadFragment((activity as MainActivity).previousFragment)
+        Log.d("ReportDateDialogFragment", "onDismiss called.")
+
+        // Ensure the dialog is a Dialog instance
+        val dialogInstance = dialog as? android.app.Dialog
+        if (dialogInstance != null) {
+            val dialogView = dialogInstance.window?.decorView ?: return super.onDismiss(dialog)
+
+            // Animate alpha from 1.0 to 0.0 over 350ms
+            val fadeOut = ObjectAnimator.ofFloat(dialogView, "alpha", 1f, 0f).apply {
+                duration = 350
+                interpolator = AccelerateDecelerateInterpolator()
+                addListener(object : android.animation.AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: android.animation.Animator) {
+                        Log.d("ReportDateDialogFragment", "Animation ended.")
+                        onDismissListener?.invoke()
+
+                        // Safely check if activity is not null and cast to MainActivity
+                        val activity = activity as? MainActivity
+                        if (activity != null) {
+                            super@ReportDateDialogFragment.onDismiss(dialog)  // Call super with the dialog argument
+
+                            if (!isDaysRangeSelected && activity.previousFragment != null) {
+                                Log.d("ReportDateDialogFragment", "Going back to previous fragment.")
+                                activity.loadFragment(activity.previousFragment!!)
+                            }
+                        } else {
+                            Log.e("ReportDateDialogFragment", "Activity is null or not of type MainActivity.")
+                            super@ReportDateDialogFragment.onDismiss(dialog)  // Call super if activity is null or not the correct type
+                        }
+                    }
+                })
+            }
+            fadeOut.start()
+        } else {
+            // If the dialog is not a Dialog instance, just call the super method
+            super.onDismiss(dialog)
         }
     }
 

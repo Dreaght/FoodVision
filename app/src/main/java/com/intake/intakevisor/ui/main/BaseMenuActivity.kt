@@ -1,10 +1,11 @@
 package com.intake.intakevisor.ui.main
 
-import android.os.Handler
+import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.intake.intakevisor.BaseActivity
 import com.intake.intakevisor.R
 import com.intake.intakevisor.databinding.MenuPanelBinding
@@ -12,17 +13,18 @@ import com.intake.intakevisor.ui.main.chat.ChatFragment
 import com.intake.intakevisor.ui.main.diary.DiaryFragment
 import com.intake.intakevisor.ui.main.feedback.FeedbackFragment
 import com.intake.intakevisor.ui.main.settings.SettingsFragment
+import kotlinx.coroutines.*
 
 open class BaseMenuActivity : BaseActivity() {
-
     private lateinit var binding: MenuPanelBinding
     private lateinit var menuHelper: MenuHelper
 
-    lateinit var previousFragment: Fragment
+    var previousFragment: Fragment? = null
     lateinit var currentFragment: Fragment
 
-    // Flag to prevent fragment switching during the delay
-    private var isTransactionInProgress = false
+    private val fragmentScope = CoroutineScope(Dispatchers.Main + SupervisorJob()) // CoroutineScope for fragment management
+    private var fragmentJob: Job? = null // Job to handle fragment transactions
+
     var feedbackDialogShown = false
 
     override fun onContentChanged() {
@@ -45,61 +47,128 @@ open class BaseMenuActivity : BaseActivity() {
     }
 
     override fun loadFragment(fragment: Fragment) {
-        // Prevent fragment switching if a transaction is already in progress
-        if (isTransactionInProgress) return
-
-        val tag = fragment::class.java.name // Use the fragment's class name as a unique tag
+        val tag = fragment::class.java.name
         val existingFragment = supportFragmentManager.findFragmentByTag(tag)
 
-        val transaction = supportFragmentManager.beginTransaction()
+        // Cancel any ongoing fragment transaction job
+        fragmentJob?.cancel()
 
-        // Set the flag to true, indicating a transaction is in progress
-        isTransactionInProgress = true
+        // Start a new fragment transaction job
+        fragmentJob = fragmentScope.launch {
+            val transaction = supportFragmentManager.beginTransaction()
 
-        // If the user is already on this fragment, reset it
-        if (::currentFragment.isInitialized) {
-            if (currentFragment.tag == tag) {
-                // If it's the same fragment, remove and recreate it (reset state)
-                transaction.remove(currentFragment)
-                currentFragment = fragment // Create a new instance
-                transaction.add(R.id.fragment_container, currentFragment, tag)
-                Handler().postDelayed({
-                    // Commit the transaction after delay
-                    transaction.commitAllowingStateLoss()  // Allowing state loss to handle edge cases
+            // Handle the current fragment
+            if (::currentFragment.isInitialized) {
+                if (currentFragment.tag == tag) {
+                    // If it's the same fragment, reset its state
+                    transaction.remove(currentFragment)
+                    currentFragment = fragment
+                    transaction.add(R.id.fragment_container, currentFragment, tag)
+                    transaction.commitAllowingStateLoss()
                     activateItemInMenu(currentFragment)
-                    // After transaction is completed, allow further switches
-                    isTransactionInProgress = false
-                }, 600)
-                return
+                    removeDuplicateFragments() // Clean up after switch
+                    return@launch
+                } else {
+                    // Set previousFragment before switching
+                    previousFragment = currentFragment
+
+                    // Fade out the current fragment
+                    val currentFragmentView = currentFragment.view
+                    if (currentFragmentView != null) {
+                        currentFragmentView.animate()
+                            .alpha(0f) // Fade out
+                            .setDuration(300) // Animation duration
+                            .withEndAction {
+                                transaction.hide(currentFragment) // Hide the current fragment
+                                performAddOrShowFragment(transaction, fragment, tag, existingFragment)
+                                removeDuplicateFragments() // Clean up after switch
+                            }.start()
+                        delay(300) // Wait for the fade-out animation
+                    } else {
+                        // If no view exists, directly switch fragments
+                        performAddOrShowFragment(transaction, fragment, tag, existingFragment)
+                        removeDuplicateFragments() // Clean up after switch
+                    }
+                }
             } else {
-                // If it's a different fragment, just hide the current one
-                transaction.setCustomAnimations(
-                    android.R.anim.fade_in, // Enter animation
-                    android.R.anim.fade_out // Exit animation
-                )
-                transaction.hide(currentFragment) // Hide the current fragment
-                previousFragment = currentFragment // Remember the previous fragment
+                // No current fragment exists, directly add the new fragment
+                currentFragment = fragment
+                transaction.add(R.id.fragment_container, currentFragment, tag)
+
+                transaction.commitAllowingStateLoss()
+                activateItemInMenu(currentFragment)
+                removeDuplicateFragments() // Clean up after switch
+            }
+        }
+    }
+
+    private fun removeDuplicateFragments() {
+        val fragmentManager = supportFragmentManager
+        val fragmentTags = mutableSetOf<String>()
+        val fragmentsToRemove = mutableListOf<Fragment>()
+
+        for (fragment in fragmentManager.fragments) {
+            if (fragment.isAdded) {
+                val tag = fragment::class.java.name
+                if (fragmentTags.contains(tag) && fragment != currentFragment) {
+                    // If fragment type already exists and it's not the current fragment, mark it for removal
+                    fragmentsToRemove.add(fragment)
+                } else {
+                    fragmentTags.add(tag)
+                }
             }
         }
 
-        // Show the existing fragment if available, or create a new one
+        // Remove the duplicate fragments
+        val transaction = fragmentManager.beginTransaction()
+        for (fragment in fragmentsToRemove) {
+            transaction.remove(fragment)
+        }
+        transaction.commitAllowingStateLoss()
+
+        Log.d("BaseMenuActivity", "Removed duplicate fragments: ${fragmentsToRemove.size}")
+    }
+
+    private fun performAddOrShowFragment(
+        transaction: FragmentTransaction,
+        fragment: Fragment,
+        tag: String,
+        existingFragment: Fragment?
+    ) {
         if (existingFragment != null) {
-            transaction.show(existingFragment)
+            // Use the existing fragment
             currentFragment = existingFragment
+            val fragmentView = currentFragment.view
+            if (fragmentView != null) {
+                fragmentView.alpha = 0f // Start at alpha 0
+                fragmentView.animate()
+                    .alpha(1f) // Fade in
+                    .setDuration(300) // Animation duration
+                    .start()
+            }
+            transaction.show(existingFragment)
         } else {
-            // Add the fragment if it's not found in fragment manager
-            transaction.add(R.id.fragment_container, fragment, tag)
+            // Add the new fragment
             currentFragment = fragment
+            transaction.add(R.id.fragment_container, fragment, tag)
+
+            // Defer the alpha animation until the view is created
+            supportFragmentManager.executePendingTransactions()
+            val fragmentView = fragment.view
+            if (fragmentView != null) {
+                fragmentView.alpha = 0f // Start at alpha 0
+                fragmentView.post {
+                    fragmentView.animate()
+                        .alpha(1f) // Fade in
+                        .setDuration(300) // Animation duration
+                        .start()
+                }
+            }
         }
 
-        Log.d("BaseMenuActivity", "Fragment shown: ${currentFragment::class.java.simpleName}")
-
-        // Commit the transaction after a slight delay for smoother transitions
-        Handler().postDelayed({
-            transaction.commitAllowingStateLoss()  // Commit after delay
-            activateItemInMenu(currentFragment)
-            isTransactionInProgress = false
-        }, 100)
+        // Commit the transaction
+        transaction.commitAllowingStateLoss()
+        activateItemInMenu(currentFragment)
     }
 
     fun activateItemInMenu(fragment: Fragment) {
@@ -122,5 +191,10 @@ open class BaseMenuActivity : BaseActivity() {
             is SettingsFragment -> menuHelper.activateSettings(binding)
         }
         Log.d("BaseMenuActivity", "Activated item in menu: ${fragment::class.java.simpleName}")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        fragmentScope.cancel() // Cancel all coroutines when activity is destroyed
     }
 }
