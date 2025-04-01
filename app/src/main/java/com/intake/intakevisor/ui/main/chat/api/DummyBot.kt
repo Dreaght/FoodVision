@@ -1,5 +1,6 @@
 package com.intake.intakevisor.ui.main.chat.api
 
+import android.content.Context
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -16,7 +17,7 @@ class DummyBot : AssistantBot {
     )
 
     // Simulate streaming of AI response with delays
-    override suspend fun getResponseFragments(message: String, onFragmentReceived: (String) -> Unit) {
+    override suspend fun getResponseFragments(message: String, context: Context, onFragmentReceived: (String) -> Unit) {
         val finalResponse = responses.firstOrNull() ?: ("Of course!" +
                 " If you have any more questions or need further assistance in the future," +
                 " feel free to reach out. Wishing you the best on your journey to better health and well-being!")

@@ -41,7 +41,7 @@ class MyViewModel : ViewModel() {
     fun sendMessage(chatMessage: String) {
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.api.sendMessage(ChatRequest(chatMessage))
+//                val response = RetrofitClient.api.sendMessage(ChatRequest(chatMessage))
 //                Log.d("Chat", "Reply: ${response.reply}")
             } catch (e: Exception) {
                 Log.e("Chat", "Error: ${e.message}")

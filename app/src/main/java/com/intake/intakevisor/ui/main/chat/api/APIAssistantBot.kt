@@ -1,5 +1,6 @@
 package com.intake.intakevisor.ui.main.chat.api
 
+import android.content.Context
 import com.intake.intakevisor.api.RetrofitClient
 import com.intake.intakevisor.api.request.ChatRequest
 import com.intake.intakevisor.ui.main.diary.DiaryDatabaseHelper
@@ -25,17 +26,23 @@ class APIAssistantBot : AssistantBot {
 
     override suspend fun getResponseFragments(
         message: String,
+        context: Context,
         onFragmentReceived: (String) -> Unit
     ) {
+        diaryDatabaseHelper = DiaryDatabaseHelper(context)
 
         val today = LocalDate.now()
         val weekAgo = today.minusDays(7)
 
+        // Get the food items
         val foodItems = getNutritionInfoFromDatabase(ReportDaysRange(weekAgo, today))
         val reportData = InputReportData.of(foodItems)
         val jsonString = jsonAdapter.toJson(reportData)
 
-        val responseBody: ResponseBody = api.sendMessage(ChatRequest("$message $jsonString"))
+        // Send the request
+        val responseBody: ResponseBody = api.sendMessage("""
+            {"message": $message, "data": $jsonString}
+        """.trimIndent())
 
         flow {
             val reader = BufferedReader(InputStreamReader(responseBody.byteStream()))
@@ -45,11 +52,12 @@ class APIAssistantBot : AssistantBot {
                 emit(line!!)
             }
         }
-        .flowOn(Dispatchers.IO) // Process on IO thread
-        .collect { fragment ->
-            onFragmentReceived(fragment)
-        }
+            .flowOn(Dispatchers.IO) // Process on IO thread
+            .collect { fragment ->
+                onFragmentReceived(fragment)
+            }
     }
+
 
     private suspend fun getNutritionInfoFromDatabase(range: ReportDaysRange): List<Map<String, List<FoodItem>>> {
         return diaryDatabaseHelper.getMealsForDaysRange(range)

@@ -66,7 +66,7 @@ class ChatFragment : Fragment() {
     private fun sendMessage(message: String) {
         // Use Coroutine to start streaming the response
         CoroutineScope(Dispatchers.Main).launch {
-            bot.getResponseFragments(message) { fragment ->
+            bot.getResponseFragments(message, requireContext()) { fragment ->
                 // If we need a new response (which means the last message is from the user)
                 if (isNewResponseNeeded) {
                     // Add a new assistant message for the response

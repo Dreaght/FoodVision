@@ -13,8 +13,8 @@ data class FoodFragmentEntity(
     val date: String,
     val mealType: String,
     val image: ByteArray,
-    @TypeConverters(NutritionInfoConverter::class)
-    val nutrition: NutritionInfo
+
+    @TypeConverters(NutritionInfoConverter::class) val nutrition: NutritionInfo
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

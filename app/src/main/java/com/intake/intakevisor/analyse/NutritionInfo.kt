@@ -3,6 +3,8 @@ package com.intake.intakevisor.analyse
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.TypeConverter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -157,13 +159,14 @@ data class NutritionInfo(
 
     class NutritionInfoConverter {
         @TypeConverter
-        fun fromNutritionInfo(nutrition: NutritionInfo): String {
-            return Json.encodeToString(nutrition)
+        fun fromNutritionInfo(nutritionInfo: NutritionInfo): String {
+            return Gson().toJson(nutritionInfo)
         }
 
         @TypeConverter
-        fun toNutritionInfo(json: String): NutritionInfo {
-            return Json.decodeFromString(json)
+        fun toNutritionInfo(nutritionInfoString: String): NutritionInfo {
+            val type = object : TypeToken<NutritionInfo>() {}.type
+            return Gson().fromJson(nutritionInfoString, type)
         }
     }
 }

@@ -23,5 +23,5 @@ interface ApiService {
 
     @Streaming
     @POST("chat/")
-    suspend fun sendMessage(@Body request: ChatRequest): ResponseBody
+    suspend fun sendMessage(@Body request: String): ResponseBody
 }
