@@ -1,7 +1,6 @@
 package com.intake.intakevisor.api
 
 import com.intake.intakevisor.api.request.ChatRequest
-import com.intake.intakevisor.api.request.ChatResponse
 import com.intake.intakevisor.api.request.ReportRequest
 import com.intake.intakevisor.api.request.UploadResponse
 import okhttp3.MultipartBody

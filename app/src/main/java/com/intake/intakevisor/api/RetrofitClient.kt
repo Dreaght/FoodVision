@@ -1,6 +1,10 @@
 package com.intake.intakevisor.api
 
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.tasks.await
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -12,8 +16,21 @@ object RetrofitClient {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+    private val authInterceptor = Interceptor { chain ->
+        val token = FirebaseTokenProvider.getToken()
+        val request = if (token != null) {
+            chain.request().newBuilder()
+                .addHeader("Authorization", "Bearer $token")
+                .build()
+        } else {
+            chain.request()
+        }
+        chain.proceed(request)
+    }
+
     private val client = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(authInterceptor)
         .build()
 
     val api: ApiService by lazy {

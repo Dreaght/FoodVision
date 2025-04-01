@@ -31,7 +31,7 @@ class MyViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = RetrofitClient.api.sendReport(ReportRequest(reportData))
-                Log.d("Report", "Response: ${response.result}")
+                Log.d("Report", "Response: ${response.message()}")
             } catch (e: Exception) {
                 Log.e("Report", "Error: ${e.message}")
             }
@@ -42,7 +42,7 @@ class MyViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = RetrofitClient.api.sendMessage(ChatRequest(chatMessage))
-                Log.d("Chat", "Reply: ${response.reply}")
+//                Log.d("Chat", "Reply: ${response.reply}")
             } catch (e: Exception) {
                 Log.e("Chat", "Error: ${e.message}")
             }
