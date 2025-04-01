@@ -1,14 +1,17 @@
-package com.intake.intakevisor.ui.main.feedback
+package com.intake.intakevisor.ui.main.feedback.api
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import androidx.core.graphics.createBitmap
+import com.intake.intakevisor.ui.main.feedback.ReportDaysRange
 import kotlinx.coroutines.delay
 
-class ReportAPI {
+class DummyReportAPI : ReportAPI {
     // Simulate an API that generates a bitmap image of a report
-    suspend fun fetchReport(range: ReportDaysRange): Bitmap {
+    override suspend fun fetchReport(range: ReportDaysRange, context: Context): Bitmap {
         delay(3000) // Simulate a 3-second loading time
         return generateDummyReportImage(range)
     }
@@ -16,7 +19,7 @@ class ReportAPI {
     private fun generateDummyReportImage(range: ReportDaysRange): Bitmap {
         val width = 800
         val height = 600
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmap(width, height)
         val canvas = Canvas(bitmap)
         val paint = Paint()
 

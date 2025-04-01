@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -201,6 +202,9 @@ class LoginActivity : AppCompatActivity() {
     private fun navigateToMainActivity(user: FirebaseUser) {
         val preferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
         val isFirstRun = preferences.getBoolean("isFirstRun", true)
+
+        FirebaseAuth.getInstance().currentUser?.getIdToken(true)
+            ?.addOnSuccessListener { result -> Log.d("TOKEN", result.token ?: "No token") }
 
         if (isFirstRun) {
             startActivity(Intent(this, WelcomeActivity::class.java))

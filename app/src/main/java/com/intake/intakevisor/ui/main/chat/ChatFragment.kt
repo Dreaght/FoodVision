@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.intake.intakevisor.databinding.ChatFragmentBinding
 import com.intake.intakevisor.ui.main.MainActivity
+import com.intake.intakevisor.ui.main.chat.api.APIAssistantBot
+import com.intake.intakevisor.ui.main.chat.api.AssistantBot
+import com.intake.intakevisor.ui.main.chat.api.DummyBot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,7 +25,7 @@ class ChatFragment : Fragment() {
 
     private val messages = mutableListOf<Message>()
     private lateinit var adapter: MessageAdapter
-    private val bot = ReceiverBot()
+    private val bot: AssistantBot = APIAssistantBot()
     private var isNewResponseNeeded = true
 
     override fun onCreateView(

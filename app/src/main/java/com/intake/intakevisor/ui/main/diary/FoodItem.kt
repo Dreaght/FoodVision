@@ -4,15 +4,16 @@ import android.graphics.Bitmap
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.intake.intakevisor.analyse.NutritionInfo
 
-data class FoodItem(val name: String, val image: Bitmap) : Parcelable {
+data class FoodItem(val nutrition: NutritionInfo, val image: Bitmap) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
+        parcel.readParcelable<NutritionInfo>(NutritionInfo::class.java.classLoader)!!,
         parcel.readParcelable<Bitmap>(Bitmap::class.java.classLoader)!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(name)
+        parcel.writeParcelable(nutrition, flags)
         parcel.writeParcelable(image, flags)
     }
 
@@ -34,11 +35,11 @@ data class FoodItem(val name: String, val image: Bitmap) : Parcelable {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
         other as FoodItem
-        return name == other.name && image.sameAs(other.image)
+        return nutrition == other.nutrition && image.sameAs(other.image)
     }
 
     override fun hashCode(): Int {
-        var result = name.hashCode()
+        var result = nutrition.hashCode()
         result = 31 * result + image.hashCode()
         return result
     }

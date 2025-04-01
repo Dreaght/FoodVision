@@ -3,11 +3,11 @@ package com.intake.intakevisor.ui.main.diary
 import android.content.Context
 import android.graphics.BitmapFactory
 import com.intake.intakevisor.analyse.FoodFragment
-import com.intake.intakevisor.analyse.NutritionInfo
 import com.intake.intakevisor.db.DiaryDatabase
 import com.intake.intakevisor.db.FoodFragmentEntity
 import com.intake.intakevisor.db.LocalDiaryDatabase
 import com.intake.intakevisor.db.LocalDiaryDatabaseImpl
+import com.intake.intakevisor.ui.main.feedback.ReportDaysRange
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,6 +36,17 @@ class DiaryDatabaseHelper(context: Context) {
             getFoodItemsForMeal(formattedDate, "dinner").map { it.mealType to listOf(createFoodItem(it)) }
         )
 
+        return meals
+    }
+
+    suspend fun getMealsForDaysRange(range: ReportDaysRange): List<Map<String, List<FoodItem>>> {
+        val meals = mutableListOf<Map<String, List<FoodItem>>>()
+        var currentDay = range.start
+        while (!currentDay.isAfter(range.end)) {
+            val formattedDate = currentDay.toString()
+            meals.add(getMealsForDate(formattedDate))
+            currentDay = currentDay.plusDays(1)
+        }
         return meals
     }
 
@@ -68,16 +79,15 @@ class DiaryDatabaseHelper(context: Context) {
             date = selectedDate,
             mealType = mealType,
             image = foodFragment.image,
-            name = foodFragment.nutritionInfo.name,
-            calories = foodFragment.nutritionInfo.calories
+            nutrition = foodFragment.nutritionInfo
         )
     }
 
     fun createFoodItem(entity: FoodFragmentEntity): FoodItem {
         val bitmap = BitmapFactory.decodeByteArray(entity.image, 0, entity.image.size)
-        val nutritionInfo = NutritionInfo(name = entity.name, calories = entity.calories)
+        val nutritionInfo = entity.nutrition
         return FoodItem(
-            name = "${nutritionInfo.name} ${nutritionInfo.calories}",
+            nutrition = nutritionInfo,
             image = bitmap
         )
     }

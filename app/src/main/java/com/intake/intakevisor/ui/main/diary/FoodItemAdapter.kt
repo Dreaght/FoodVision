@@ -20,8 +20,8 @@ class FoodItemAdapter(private val foodItemList: List<FoodItem>) :
 
     override fun onBindViewHolder(holder: FoodItemViewHolder, position: Int) {
         val foodItem = foodItemList[position]
-        holder.foodName.text = foodItem.name
-
+        holder.foodName.text = holder.itemView.context.getString(
+            R.string.nutrition_info, foodItem.nutrition.name, foodItem.nutrition.calories)
         Glide.with(holder.foodIcon.context)
             .load(foodItem.image) // Replace with your image path or bitmap
             .placeholder(R.drawable.food_icon_placeholder) // Placeholder image

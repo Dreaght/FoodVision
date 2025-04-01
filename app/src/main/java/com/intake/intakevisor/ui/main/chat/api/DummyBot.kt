@@ -1,9 +1,9 @@
-package com.intake.intakevisor.ui.main.chat
+package com.intake.intakevisor.ui.main.chat.api
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
 import kotlin.random.Random
 
-class ReceiverBot {
+class DummyBot : AssistantBot {
 
     private val responses = mutableListOf(
         "Hello! I understand you'd like some help," +
@@ -16,7 +16,7 @@ class ReceiverBot {
     )
 
     // Simulate streaming of AI response with delays
-    suspend fun getResponseFragments(message: String, onFragmentReceived: (String) -> Unit) {
+    override suspend fun getResponseFragments(message: String, onFragmentReceived: (String) -> Unit) {
         val finalResponse = responses.firstOrNull() ?: ("Of course!" +
                 " If you have any more questions or need further assistance in the future," +
                 " feel free to reach out. Wishing you the best on your journey to better health and well-being!")
@@ -24,12 +24,12 @@ class ReceiverBot {
 
         val responseFragments = finalResponse.split(" ")  // Split by words (or sentences) for fragments
 
-        delay(Random.nextLong(1000, 1500))
+        delay(Random.Default.nextLong(1000, 1500))
 
         for (fragment in responseFragments) {
             onFragmentReceived(fragment)
 
-            delay(Random.nextLong(80, 500))
+            delay(Random.Default.nextLong(80, 500))
         }
     }
 }

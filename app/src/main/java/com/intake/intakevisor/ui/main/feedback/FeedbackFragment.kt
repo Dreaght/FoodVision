@@ -1,18 +1,18 @@
 package com.intake.intakevisor.ui.main.feedback
 
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.intake.intakevisor.R
 import com.intake.intakevisor.databinding.FeedbackFragmentBinding
 import com.intake.intakevisor.ui.main.MainActivity
+import com.intake.intakevisor.ui.main.feedback.api.BackendReportAPI
+import com.intake.intakevisor.ui.main.feedback.api.ReportAPI
 import kotlinx.coroutines.*
 import java.time.format.DateTimeFormatter
 
@@ -27,7 +27,7 @@ class FeedbackFragment : Fragment() {
 
     private var isDialogShown = false // Flag to track dialog state
 
-    private val reportAPI = ReportAPI()
+    private lateinit var reportAPI: ReportAPI
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,16 +37,16 @@ class FeedbackFragment : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mainActivity = requireActivity() as MainActivity
         mainActivity.activateItemInMenu(this)
 
+        reportAPI = BackendReportAPI()
+
         setupUI()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun setupUI() {
         if (!isAdded) {
             return
@@ -57,7 +57,6 @@ class FeedbackFragment : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun showDialog() {
         isDialogShown = true // Set the flag to true before showing the dialog
 
@@ -89,7 +88,7 @@ class FeedbackFragment : Fragment() {
         reportJob = lifecycleScope.launch {
             try {
                 val reportImage = withContext(Dispatchers.IO) {
-                    reportAPI.fetchReport(reportDaysRange)
+                    reportAPI.fetchReport(reportDaysRange, requireContext())
                 }
                 if (isAdded && _binding != null) { // Ensure fragment is attached and binding is valid
                     showReport(reportImage)

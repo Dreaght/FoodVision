@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.intake.intakevisor"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -106,6 +106,12 @@ dependencies {
 
     implementation(libs.androidx.core.splashscreen)
 
-    implementation("com.google.android.material:material:1.9.0")
+    implementation(libs.material.v190)
 
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0") // Use Moshi for JSON
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("io.coil-kt:coil:2.1.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }

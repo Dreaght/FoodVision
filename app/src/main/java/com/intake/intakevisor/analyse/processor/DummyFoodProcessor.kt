@@ -1,7 +1,10 @@
-package com.intake.intakevisor.analyse
+package com.intake.intakevisor.analyse.processor
 
 import android.graphics.Bitmap
 import android.graphics.Rect
+import com.intake.intakevisor.analyse.FoodRegion
+import com.intake.intakevisor.analyse.Frame
+import com.intake.intakevisor.analyse.NutritionInfo
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 

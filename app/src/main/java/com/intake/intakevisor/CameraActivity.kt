@@ -17,10 +17,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.intake.intakevisor.analyse.FoodFragment
-import com.intake.intakevisor.analyse.DummyFoodProcessor
+import com.intake.intakevisor.analyse.processor.DummyFoodProcessor
 import com.intake.intakevisor.analyse.FoodRegion
 import com.intake.intakevisor.analyse.Frame
 import com.intake.intakevisor.analyse.camera.CameraController
+import com.intake.intakevisor.analyse.processor.APIFoodProcessor
+import com.intake.intakevisor.analyse.processor.FoodDetector
 import com.intake.intakevisor.analyse.util.RegionRenderer
 import com.intake.intakevisor.analyse.widget.TransparentOverlayView
 import com.intake.intakevisor.databinding.ActivityCameraBinding
@@ -43,7 +45,7 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var cancelButton: Button
     private lateinit var confirmButton: Button
     private lateinit var regionRenderer: RegionRenderer
-    private var foodProcessor: DummyFoodProcessor? = null
+    private var foodProcessor: FoodDetector? = null
 
     private val GALLERY_REQUEST_CODE = 1001
 
@@ -218,7 +220,7 @@ class CameraActivity : AppCompatActivity() {
     private fun renderRegions(frame: Frame) {
         showLoading(true)
         regionsJob = lifecycleScope.launch {
-            foodProcessor = DummyFoodProcessor(frame)
+            foodProcessor = APIFoodProcessor(frame)
             val detectedFoods = withContext(Dispatchers.IO) {
                 foodProcessor?.detectFoods() ?: emptyList()
             }
