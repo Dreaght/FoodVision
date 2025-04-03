@@ -34,7 +34,9 @@ class DiaryFragment : Fragment() {
     private lateinit var mainActivity: MainActivity
     private lateinit var diaryDatabaseHelper: DiaryDatabaseHelper
 
-    private val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    private val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).apply {
+        timeZone = TimeZone.getDefault()  // Ensure it uses the local timezone
+    }
     private val currentDay: Calendar = Calendar.getInstance()
     private val mealData = mapOf(
         "breakfast" to mutableListOf<FoodItem>(),

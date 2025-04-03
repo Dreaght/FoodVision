@@ -2,7 +2,6 @@ package com.intake.intakevisor.ui.main.chat.api
 
 import android.content.Context
 import com.intake.intakevisor.api.RetrofitClient
-import com.intake.intakevisor.api.request.ChatRequest
 import com.intake.intakevisor.ui.main.diary.DiaryDatabaseHelper
 import com.intake.intakevisor.ui.main.diary.FoodItem
 import com.intake.intakevisor.ui.main.feedback.ReportDaysRange
@@ -15,6 +14,8 @@ import okhttp3.ResponseBody
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Calendar
 
 class APIAssistantBot : AssistantBot {
 
@@ -31,11 +32,17 @@ class APIAssistantBot : AssistantBot {
     ) {
         diaryDatabaseHelper = DiaryDatabaseHelper(context)
 
-        val today = LocalDate.now()
-        val weekAgo = today.minusDays(7)
+        val todayLocalDate = LocalDate.now()
+        val weekAgoLocalDate = todayLocalDate.minusDays(7)
+
+        val todayCalendar = Calendar.getInstance()
+todayCalendar.time = java.util.Date.from(todayLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+
+val weekAgoCalendar = Calendar.getInstance()
+weekAgoCalendar.time = java.util.Date.from(weekAgoLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
 
         // Get the food items
-        val foodItems = getNutritionInfoFromDatabase(ReportDaysRange(weekAgo, today))
+        val foodItems = getNutritionInfoFromDatabase(ReportDaysRange(weekAgoCalendar, todayCalendar))
         val reportData = InputReportData.of(foodItems)
         val jsonString = jsonAdapter.toJson(reportData)
 

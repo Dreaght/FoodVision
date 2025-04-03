@@ -3,6 +3,7 @@ package com.intake.intakevisor.ui.main.feedback.api
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import com.intake.intakevisor.api.RetrofitClient
 import com.intake.intakevisor.api.request.ReportRequest
 import com.intake.intakevisor.ui.main.diary.DiaryDatabaseHelper
@@ -13,6 +14,8 @@ import com.squareup.moshi.Moshi
 import okhttp3.ResponseBody
 import retrofit2.Response
 import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class BackendReportAPI : ReportAPI {
 
@@ -21,10 +24,15 @@ class BackendReportAPI : ReportAPI {
     private val moshi = Moshi.Builder().build()
     private val jsonAdapter = moshi.adapter(InputReportData::class.java)
 
+
+
     override suspend fun fetchReport(range: ReportDaysRange, context: Context): Bitmap {
         diaryDatabaseHelper = DiaryDatabaseHelper(context)
 
         val foodItems = getNutritionInfoFromDatabase(range)
+
+        Log.d("BackendReportAPI", "Food items: $foodItems")
+
         val reportData = InputReportData.of(foodItems)
         val jsonString = jsonAdapter.toJson(reportData)
 

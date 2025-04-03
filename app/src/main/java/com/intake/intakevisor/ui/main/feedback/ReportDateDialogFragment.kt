@@ -19,6 +19,9 @@ import android.content.DialogInterface
 import android.util.Log
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.intake.intakevisor.ui.main.MainActivity
+import java.time.ZoneId
+import java.util.Calendar
+import java.util.Date
 
 @RequiresApi(Build.VERSION_CODES.O)
 class ReportDateDialogFragment : DialogFragment() {
@@ -83,7 +86,17 @@ class ReportDateDialogFragment : DialogFragment() {
 
         binding.calendarDoneBtn.setOnClickListener {
             if (selectedStartDate != null && selectedEndDate != null) {
-                chosenDaysRange = ReportDaysRange(selectedStartDate!!, selectedEndDate!!)
+                // Convert LocalDate to Calendar
+                val startDateCalendar = Calendar.getInstance().apply {
+                    time = Date.from(selectedStartDate!!.atStartOfDay(ZoneId.systemDefault()).toInstant())
+                }
+
+                val endDateCalendar = Calendar.getInstance().apply {
+                    time = Date.from(selectedEndDate!!.atStartOfDay(ZoneId.systemDefault()).toInstant())
+                }
+
+                // Pass the Calendar objects to ReportDaysRange
+                chosenDaysRange = ReportDaysRange(startDateCalendar, endDateCalendar)
                 isDaysRangeSelected = true
                 dismiss()
                 onDaysRangeChosen?.invoke(chosenDaysRange!!)

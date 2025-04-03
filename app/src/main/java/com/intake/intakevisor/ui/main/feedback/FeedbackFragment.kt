@@ -14,7 +14,9 @@ import com.intake.intakevisor.ui.main.MainActivity
 import com.intake.intakevisor.ui.main.feedback.api.BackendReportAPI
 import com.intake.intakevisor.ui.main.feedback.api.ReportAPI
 import kotlinx.coroutines.*
+import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class FeedbackFragment : Fragment() {
     private var _binding: FeedbackFragmentBinding? = null
@@ -65,10 +67,20 @@ class FeedbackFragment : Fragment() {
             setOnDaysRangeChosenListener { chosenDaysRange ->
                 Log.d("FeedbackFragment", "Chosen days range: $chosenDaysRange")
                 isWeekSelected = true
+
+                // Format the start and end dates of the Calendar range
+                val startDate = chosenDaysRange.start.time
+                val endDate = chosenDaysRange.end.time
+
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val formattedStartDate = dateFormat.format(startDate)
+                val formattedEndDate = dateFormat.format(endDate)
+
                 binding.tvSelectedWeek.text = getString(
                     R.string.selectedWeekLabel,
-                    "${chosenDaysRange.start.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))} - ${chosenDaysRange.end.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}"
+                    "$formattedStartDate - $formattedEndDate"
                 )
+
                 loadReportFor(chosenDaysRange)
                 (activity as MainActivity).feedbackDialogShown = false
             }

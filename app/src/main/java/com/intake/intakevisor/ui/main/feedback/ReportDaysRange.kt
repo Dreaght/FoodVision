@@ -1,5 +1,5 @@
 package com.intake.intakevisor.ui.main.feedback
 
-import java.time.LocalDate
+import java.util.Calendar
 
-data class ReportDaysRange(val start: LocalDate, val end: LocalDate)
+data class ReportDaysRange(val start: Calendar, val end: Calendar)

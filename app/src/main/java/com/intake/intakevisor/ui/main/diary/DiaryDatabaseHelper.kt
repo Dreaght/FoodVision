@@ -11,10 +11,18 @@ import com.intake.intakevisor.ui.main.feedback.ReportDaysRange
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 
 class DiaryDatabaseHelper(context: Context) {
     private val db = LocalDiaryDatabase.getDatabase(context)
     private val localDiaryDatabase: DiaryDatabase = LocalDiaryDatabaseImpl(db.diaryDao())
+    private val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).apply {
+        timeZone = TimeZone.getDefault()  // Ensure it uses the local timezone
+    }
 
     suspend fun hasDataForDate(formattedDate: String): Boolean {
         return localDiaryDatabase.hasDataForDate(formattedDate)
@@ -42,11 +50,16 @@ class DiaryDatabaseHelper(context: Context) {
     suspend fun getMealsForDaysRange(range: ReportDaysRange): List<Map<String, List<FoodItem>>> {
         val meals = mutableListOf<Map<String, List<FoodItem>>>()
         var currentDay = range.start
-        while (!currentDay.isAfter(range.end)) {
-            val formattedDate = currentDay.toString()
+
+        // Loop until the end date is reached
+        while (currentDay.before(range.end) || currentDay == range.end) {
+            val formattedDate = dateFormatter.format(currentDay.time)
             meals.add(getMealsForDate(formattedDate))
-            currentDay = currentDay.plusDays(1)
+
+            // Increment the day by 1
+            currentDay.add(Calendar.DAY_OF_MONTH, 1)
         }
+
         return meals
     }
 
