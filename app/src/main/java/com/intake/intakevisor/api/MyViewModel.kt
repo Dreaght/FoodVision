@@ -20,7 +20,7 @@ class MyViewModel : ViewModel() {
                 val imagePart = MultipartBody.Part.createFormData("file", imageFile.name, requestBody)
 
                 val response = RetrofitClient.api.uploadImage(imagePart)
-                Log.d("Upload", "Response: ${response.message}")
+//                Log.d("Upload", "Response: ${response.message}")
             } catch (e: Exception) {
                 Log.e("Upload", "Error: ${e.message}")
             }

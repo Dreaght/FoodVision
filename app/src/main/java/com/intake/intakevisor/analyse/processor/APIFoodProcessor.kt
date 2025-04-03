@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.util.Log
 import com.intake.intakevisor.analyse.FoodRegion
 import com.intake.intakevisor.analyse.Frame
+import com.intake.intakevisor.analyse.processor.model.FoodFragmentAPI
 import com.intake.intakevisor.api.RetrofitClient
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -27,21 +28,22 @@ class APIFoodProcessor(frame: Frame) : FoodDetector {
                 val response = api.uploadImage(imagePart)
 
                 // Parse the JSON from response.message into a list of DetectedFoodRegion
-                val detectedRegions: List<FoodRegion> = parseDetectedRegions(response.message)
+                val detectedRegions: List<FoodFragmentAPI> = response.regions
+                Log.d("APIFoodProcessor", "Detected regions: $detectedRegions")
 
                 // Convert to FoodRegion while cropping actual image fragments
                 detectedRegions.map { region ->
                     val croppedBitmap = Bitmap.createBitmap(
                         image,
-                        region.bounds.left,
-                        region.bounds.top,
-                        region.bounds.right - region.bounds.left,
-                        region.bounds.bottom - region.bounds.top
+                        region.start.X,
+                        region.start.Y,
+                        region.end.X - region.start.X,
+                        region.end.Y - region.start.Y
                     )
                     FoodRegion(
-                        Rect(region.bounds.left, region.bounds.top, region.bounds.right, region.bounds.bottom),
+                        Rect(region.start.X, region.start.Y, region.end.X, region.end.Y),
                         croppedBitmap,
-                        region.nutritionInfo
+                        region.nutrition
                     )
                 }
             } catch (e: Exception) {
@@ -57,13 +59,23 @@ class APIFoodProcessor(frame: Frame) : FoodDetector {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream) // Use JPEG for efficiency
         val byteArray = stream.toByteArray()
         val requestBody = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
-        return MultipartBody.Part.createFormData("image", "food.jpg", requestBody)
+        return MultipartBody.Part.createFormData("file", "food.jpg", requestBody)
     }
 
-    fun parseDetectedRegions(json: String): List<FoodRegion> {
+    data class FoodRegionResponseWrapper(
+        val regions: List<FoodFragmentAPI>
+    )
+
+    fun parseDetectedRegions(json: String): List<FoodFragmentAPI> {
         val moshi = Moshi.Builder().build()
-        val type = Types.newParameterizedType(List::class.java, FoodRegion::class.java)
-        val adapter = moshi.adapter<List<FoodRegion>>(type)
-        return adapter.fromJson(json) ?: emptyList()
+        val type = Types.newParameterizedType(FoodRegionResponseWrapper::class.java)
+        val adapter = moshi.adapter<FoodRegionResponseWrapper>(type)
+        val response = adapter.fromJson(json)
+
+        // Log the response if it's null for better debugging
+        if (response == null) {
+            Log.e("APIFoodProcessor", "Failed to parse JSON response: $json")
+        }
+        return response?.regions ?: emptyList() // Return the list of regions
     }
 }
