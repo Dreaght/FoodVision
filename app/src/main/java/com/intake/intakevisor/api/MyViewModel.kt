@@ -30,8 +30,8 @@ class MyViewModel : ViewModel() {
     fun sendReport(reportData: String) {
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.api.sendReport(ReportRequest(reportData))
-                Log.d("Report", "Response: ${response.message()}")
+//                val response = RetrofitClient.api.sendReport(ReportRequest(reportData))
+//                Log.d("Report", "Response: ${response.message()}")
             } catch (e: Exception) {
                 Log.e("Report", "Error: ${e.message}")
             }

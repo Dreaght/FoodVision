@@ -18,7 +18,7 @@ interface ApiService {
 
     @POST("report/")
     suspend fun sendReport(
-        @Body request: ReportRequest
+        @Body request: String
     ): Response<ResponseBody>
 
     @Streaming

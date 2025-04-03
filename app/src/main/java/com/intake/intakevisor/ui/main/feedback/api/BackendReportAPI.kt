@@ -28,7 +28,7 @@ class BackendReportAPI : ReportAPI {
         val reportData = InputReportData.of(foodItems)
         val jsonString = jsonAdapter.toJson(reportData)
 
-        val response: Response<ResponseBody> = api.sendReport(ReportRequest(jsonString))
+        val response: Response<ResponseBody> = api.sendReport(jsonString)
 
         if (response.isSuccessful && response.body() != null) {
             return convertResponseToBitmap(response.body()!!.byteStream())
