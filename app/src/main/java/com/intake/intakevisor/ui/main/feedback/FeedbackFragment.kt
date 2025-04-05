@@ -1,11 +1,15 @@
 package com.intake.intakevisor.ui.main.feedback
 
+import android.content.ContentValues
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.intake.intakevisor.R
@@ -56,6 +60,49 @@ class FeedbackFragment : Fragment() {
 
         if (!isWeekSelected && !isDialogShown) { // Ensure the dialog isn't already shown
             showDialog()
+        }
+
+        binding.downloadReportButton.setOnClickListener {
+            val drawable = binding.fragmentNutritionReport.reportImageView.drawable
+            if (drawable != null && drawable is BitmapDrawable) {
+                val bitmap = drawable.bitmap
+                saveBitmapToGallery(bitmap)
+            } else {
+                Log.e("FeedbackFragment", "No image to save.")
+            }
+        }
+
+    }
+
+    private fun saveBitmapToGallery(bitmap: Bitmap) {
+        val filename = "report_${System.currentTimeMillis()}.png"
+        val mimeType = "image/png"
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, filename)
+            put(MediaStore.Images.Media.MIME_TYPE, mimeType)
+            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/IntakeReports") // Custom folder
+            put(MediaStore.Images.Media.IS_PENDING, 1)
+        }
+
+        val contentResolver = requireContext().contentResolver
+        val imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+        imageUri?.let { uri ->
+            contentResolver.openOutputStream(uri).use { outputStream ->
+                if (outputStream != null) {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                    outputStream.flush()
+                }
+            }
+
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+            contentResolver.update(uri, contentValues, null, null)
+
+            // Optional: user feedback
+            Toast.makeText(requireContext(), "Report saved to gallery! Path: Pictures/IntakeReports", Toast.LENGTH_SHORT).show()
+        } ?: run {
+            Toast.makeText(requireContext(), "Failed to save image.", Toast.LENGTH_SHORT).show()
         }
     }
 
