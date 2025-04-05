@@ -2,6 +2,7 @@ package com.intake.intakevisor.ui.main.diary
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.util.Log
 import com.intake.intakevisor.analyse.FoodFragment
 import com.intake.intakevisor.db.DiaryDatabase
 import com.intake.intakevisor.db.FoodFragmentEntity
@@ -73,13 +74,23 @@ class DiaryDatabaseHelper(context: Context) {
     }
 
     fun deleteFoodFragmentFromDatabase(
-        selectedDate: String, mealType: String, foodFragment: FoodFragment)
-    {
+        selectedDate: String, mealType: String, foodFragment: FoodFragment
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
-            // Delete food fragment from the database
-            localDiaryDatabase.deleteFoodFragment(
-                selectedDate, mealType, convertFoodFragmentToFragmentEntity(
-                    selectedDate, mealType, foodFragment))
+            val allItems = localDiaryDatabase.getFoodItemsForMeal(selectedDate, mealType)
+
+            // Find matching entity (you can improve matching logic as needed)
+            val entityToDelete = allItems.firstOrNull { entity ->
+                entity.image.contentEquals(foodFragment.image) &&
+                        entity.nutrition == foodFragment.nutritionInfo
+            }
+
+            if (entityToDelete != null) {
+                Log.d("DiaryDatabaseHelper", "Deleting food fragment with id ${entityToDelete.id}")
+                localDiaryDatabase.deleteFoodFragmentById(entityToDelete.id)
+            } else {
+                Log.w("DiaryDatabaseHelper", "No matching entity found for deletion.")
+            }
         }
     }
 

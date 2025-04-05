@@ -9,13 +9,13 @@ import androidx.room.Query
 interface DiaryDao {
 
     @Insert
-    suspend fun insertFoodFragment(foodFragmentEntity: FoodFragmentEntity)
+    suspend fun insertFoodFragment(foodFragmentEntity: FoodFragmentEntity): Long
 
     @Query("SELECT * FROM food_fragments WHERE date = :date AND mealType = :mealType")
     suspend fun getFoodItemsForMeal(date: String, mealType: String): List<FoodFragmentEntity>
 
-    @Delete
-    fun deleteFoodFragment(foodFragmentEntity: FoodFragmentEntity)
+    @Query("DELETE FROM food_fragments WHERE id = :id")
+    suspend fun deleteFoodFragmentById(id: Long)
 
     @Query("SELECT COUNT(*) > 0 FROM food_fragments WHERE date = :date")
     suspend fun hasDataForDate(date: String): Boolean

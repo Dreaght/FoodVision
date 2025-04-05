@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.os.Parcel
 import android.os.Parcelable
 import com.intake.intakevisor.analyse.NutritionInfo
+import java.io.ByteArrayOutputStream
 
 data class FoodItem(val nutrition: NutritionInfo, val image: Bitmap) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -43,4 +44,10 @@ data class FoodItem(val nutrition: NutritionInfo, val image: Bitmap) : Parcelabl
         result = 31 * result + image.hashCode()
         return result
     }
+}
+
+internal fun Bitmap.toByteArray(): ByteArray {
+    val stream = ByteArrayOutputStream()
+    this.compress(Bitmap.CompressFormat.PNG, 100, stream)
+    return stream.toByteArray()
 }

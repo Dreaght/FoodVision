@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,12 +16,16 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.intake.intakevisor.CameraActivity
 import com.intake.intakevisor.R
 import com.intake.intakevisor.analyse.FoodFragment
 import com.intake.intakevisor.databinding.DiaryFragmentBinding
+import com.intake.intakevisor.db.FoodFragmentEntity
+import com.intake.intakevisor.listener.SimpleItemTouchHelperCallback
+import com.intake.intakevisor.listener.SwipeToDeleteCallback
 import com.intake.intakevisor.ui.main.MainActivity
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
@@ -121,7 +126,14 @@ class DiaryFragment : Fragment() {
         mealData.forEach { (mealType, items) ->
             val recyclerView = findRecyclerViewSafe(mealType) ?: return@forEach
             recyclerView.layoutManager = LinearLayoutManager(mainActivity)
-            recyclerView.adapter = FoodItemAdapter(items)
+            recyclerView.adapter = FoodItemAdapter(items) { foodItem ->
+                deleteFoodFragment(foodItem, mealType)
+            }
+
+            val foodItemAdapter = recyclerView.adapter as FoodItemAdapter
+            val itemTouchHelper = SimpleItemTouchHelperCallback(foodItemAdapter)
+            val touchHelper = ItemTouchHelper(itemTouchHelper)
+            touchHelper.attachToRecyclerView(findRecyclerViewSafe(mealType))
         }
     }
 
@@ -243,6 +255,28 @@ class DiaryFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun deleteFoodFragment(foodItem: FoodItem, mealType: String) {
+        val formattedDate = dateFormatter.format(currentDay.time)
+
+        // Delete from the database
+        CoroutineScope(Dispatchers.IO).launch {
+            val foodFragment = foodItem.toFoodFragmentEntity(formattedDate, mealType)
+
+            Log.d("DiaryFragment", "BEFORE DELETION: " + diaryDatabaseHelper.getMealsForDate(formattedDate).size)
+
+            diaryDatabaseHelper.deleteFoodFragmentFromDatabase(formattedDate, mealType, foodFragment)
+
+            Log.d("DiaryFragment", "AFTER DELETION: " + diaryDatabaseHelper.getMealsForDate(formattedDate).size)
+        }
+    }
+
+    private fun FoodItem.toFoodFragmentEntity(date: String, mealType: String): FoodFragment {
+        return FoodFragment (
+            image = this.image.toByteArray(),
+            nutritionInfo = this.nutrition
+        )
     }
 
     override fun onDestroyView() {

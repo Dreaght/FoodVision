@@ -1,9 +1,11 @@
 package com.intake.intakevisor.db
 
+import android.util.Log
+
 class LocalDiaryDatabaseImpl(private val diaryDao: DiaryDao) : DiaryDatabase {
     // Insert a FoodFragmentEntity
     override suspend fun insertFoodFragment(date: String, mealType: String, food: FoodFragmentEntity) {
-        diaryDao.insertFoodFragment(food) // Directly use FoodFragmentEntity here
+        diaryDao.insertFoodFragment(food) // Save the returned ID if needed
     }
 
     // Get food items for a meal and return FoodFragmentEntity
@@ -11,9 +13,8 @@ class LocalDiaryDatabaseImpl(private val diaryDao: DiaryDao) : DiaryDatabase {
         return diaryDao.getFoodItemsForMeal(date, mealType) // Directly return FoodFragmentEntity list
     }
 
-    // Delete a FoodFragmentEntity
-    override suspend fun deleteFoodFragment(date: String, mealType: String, food: FoodFragmentEntity) {
-        diaryDao.deleteFoodFragment(food) // Directly use FoodFragmentEntity here
+    override suspend fun deleteFoodFragmentById(id: Long) {
+        diaryDao.deleteFoodFragmentById(id)
     }
 
     override suspend fun hasDataForDate(date: String): Boolean {
