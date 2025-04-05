@@ -53,29 +53,11 @@ class APIFoodProcessor(frame: Frame) : FoodDetector {
         }
     }
 
-
     private fun prepareImage(bitmap: Bitmap): MultipartBody.Part {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream) // Use JPEG for efficiency
         val byteArray = stream.toByteArray()
         val requestBody = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
         return MultipartBody.Part.createFormData("file", "food.jpg", requestBody)
-    }
-
-    data class FoodRegionResponseWrapper(
-        val regions: List<FoodFragmentAPI>
-    )
-
-    fun parseDetectedRegions(json: String): List<FoodFragmentAPI> {
-        val moshi = Moshi.Builder().build()
-        val type = Types.newParameterizedType(FoodRegionResponseWrapper::class.java)
-        val adapter = moshi.adapter<FoodRegionResponseWrapper>(type)
-        val response = adapter.fromJson(json)
-
-        // Log the response if it's null for better debugging
-        if (response == null) {
-            Log.e("APIFoodProcessor", "Failed to parse JSON response: $json")
-        }
-        return response?.regions ?: emptyList() // Return the list of regions
     }
 }
