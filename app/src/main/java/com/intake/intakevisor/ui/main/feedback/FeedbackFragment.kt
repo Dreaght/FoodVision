@@ -19,7 +19,6 @@ import com.intake.intakevisor.ui.main.feedback.api.BackendReportAPI
 import com.intake.intakevisor.ui.main.feedback.api.ReportAPI
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class FeedbackFragment : Fragment() {
