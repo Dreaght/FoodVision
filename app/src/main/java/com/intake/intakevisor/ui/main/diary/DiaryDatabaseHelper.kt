@@ -12,7 +12,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
@@ -81,6 +80,15 @@ class DiaryDatabaseHelper(context: Context) {
             localDiaryDatabase.deleteFoodFragment(
                 selectedDate, mealType, convertFoodFragmentToFragmentEntity(
                     selectedDate, mealType, foodFragment))
+        }
+    }
+
+    // New method to reset the database
+    fun resetDatabase() {
+        CoroutineScope(Dispatchers.IO).launch {
+            // Resetting all data by clearing the tables
+            localDiaryDatabase.clearFoodFragments()
+            // Optionally, you can add more tables to clear if needed
         }
     }
 

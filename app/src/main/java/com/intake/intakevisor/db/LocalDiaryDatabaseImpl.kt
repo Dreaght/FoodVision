@@ -19,4 +19,8 @@ class LocalDiaryDatabaseImpl(private val diaryDao: DiaryDao) : DiaryDatabase {
     override suspend fun hasDataForDate(date: String): Boolean {
         return diaryDao.hasDataForDate(date)
     }
+
+    override suspend fun clearFoodFragments() {
+        diaryDao.clearFoodFragments()
+    }
 }

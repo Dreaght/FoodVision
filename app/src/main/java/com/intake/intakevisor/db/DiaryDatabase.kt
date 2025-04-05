@@ -5,4 +5,5 @@ interface DiaryDatabase {
     suspend fun getFoodItemsForMeal(date: String, mealType: String): List<FoodFragmentEntity>
     suspend fun deleteFoodFragment(date: String, mealType: String, food: FoodFragmentEntity)
     suspend fun hasDataForDate(date: String): Boolean
+    suspend fun clearFoodFragments()
 }

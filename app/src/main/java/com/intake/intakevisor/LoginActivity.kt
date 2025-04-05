@@ -18,6 +18,7 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.intake.intakevisor.ui.main.MainActivity
+import com.intake.intakevisor.ui.main.diary.DiaryDatabaseHelper
 import com.intake.intakevisor.ui.welcome.WelcomeActivity
 
 class LoginActivity : AppCompatActivity() {
@@ -27,13 +28,27 @@ class LoginActivity : AppCompatActivity() {
     private val REQUEST_PERMISSIONS = 2
     private var permissionDenialCount = 0  // Track permission denials
 
+    val sharedPreferences by lazy {
+        getSharedPreferences("UserPreferences", MODE_PRIVATE)
+    }
+
+    private lateinit var diaryDatabaseHelper: DiaryDatabaseHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
 
+        diaryDatabaseHelper = DiaryDatabaseHelper(this)
+
         // Check if this activity was launched due to a logout
         if (intent.getBooleanExtra("logout", false)) {
+            val currentUser = auth.currentUser
+            with(sharedPreferences.edit()) {
+                putString("previousUID", currentUser?.uid)
+                apply()
+            }
+
             logOut()
             // After logging out, relaunch the login flow
             launchSignInFlow()
@@ -106,6 +121,8 @@ class LoginActivity : AppCompatActivity() {
             if (resultCode == RESULT_OK) {
                 val user = auth.currentUser
                 if (user != null) {
+                    checkIfUserIsOtherAndResetDb()
+
                     // After successful login, check permissions
                     checkPermissionsAndProceed(user)
                 }
@@ -118,6 +135,15 @@ class LoginActivity : AppCompatActivity() {
                     launchSignInFlow()
                 }
             }
+        }
+    }
+
+    private fun checkIfUserIsOtherAndResetDb() {
+        val user = auth.currentUser
+        val previousUID = sharedPreferences.getString("previousUID", user?.uid)
+
+        if (previousUID != user?.uid) {
+            diaryDatabaseHelper.resetDatabase()
         }
     }
 

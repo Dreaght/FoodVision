@@ -19,4 +19,7 @@ interface DiaryDao {
 
     @Query("SELECT COUNT(*) > 0 FROM food_fragments WHERE date = :date")
     suspend fun hasDataForDate(date: String): Boolean
+
+    @Query("DELETE FROM food_fragments")
+    suspend fun clearFoodFragments()
 }
