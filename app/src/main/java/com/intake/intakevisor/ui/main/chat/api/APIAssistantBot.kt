@@ -22,7 +22,9 @@ class APIAssistantBot : AssistantBot {
     private val api = RetrofitClient.api
     private lateinit var diaryDatabaseHelper: DiaryDatabaseHelper
 
-    private val moshi = Moshi.Builder().build()
+    private val moshi = Moshi.Builder()
+        .add(com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory())
+        .build()
     private val jsonAdapter = moshi.adapter(InputReportData::class.java)
 
     override suspend fun getResponseFragments(

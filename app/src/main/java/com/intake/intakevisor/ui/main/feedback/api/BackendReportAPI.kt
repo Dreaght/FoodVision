@@ -21,10 +21,10 @@ class BackendReportAPI : ReportAPI {
 
     private lateinit var diaryDatabaseHelper: DiaryDatabaseHelper
     private val api = RetrofitClient.api
-    private val moshi = Moshi.Builder().build()
+    private val moshi = Moshi.Builder()
+        .add(com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory())
+        .build()
     private val jsonAdapter = moshi.adapter(InputReportData::class.java)
-
-
 
     override suspend fun fetchReport(range: ReportDaysRange, context: Context): Bitmap {
         diaryDatabaseHelper = DiaryDatabaseHelper(context)

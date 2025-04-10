@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
+    id("kotlin-kapt")
 }
 
 android {
@@ -31,6 +32,7 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("boolean", "ROOM_SCHEMA_EXPORT", "true")
+            buildConfigField("String", "BASE_URL", "\"http://45.93.136.230:8080/\"")
         }
         debug {
             isMinifyEnabled = false
@@ -39,7 +41,9 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("boolean", "ROOM_SCHEMA_EXPORT", "false")
+            buildConfigField("String", "BASE_URL", "\"http://45.93.136.230:8080/\"")
         }
+
     }
 
     viewBinding {
@@ -108,10 +112,16 @@ dependencies {
 
     implementation(libs.material.v190)
 
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.9.0") // Use Moshi for JSON
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
-    implementation("io.coil-kt:coil:2.1.0")
+    implementation(libs.retrofit)
+    implementation(libs.converter.moshi) // Use Moshi for JSON
+    implementation(libs.moshi.kotlin) // or latest version
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation(libs.moshi)
+
+    implementation(libs.logging.interceptor)
+    implementation(libs.coil)
+
+    implementation(libs.kotlinx.serialization.json)
+
+    ksp(libs.moshi.kotlin.codegen)
 }

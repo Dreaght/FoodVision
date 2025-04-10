@@ -5,9 +5,11 @@ import android.os.Parcelable
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.squareup.moshi.JsonClass
 import kotlinx.serialization.Serializable
 
 @Serializable
+@JsonClass(generateAdapter = true)
 data class NutritionInfo(
     val name: String = "Apple",
     val calories: Int = 0,
