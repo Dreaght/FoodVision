@@ -10,6 +10,7 @@ import com.intake.intakevisor.ui.main.diary.DiaryDatabaseHelper
 import com.intake.intakevisor.ui.main.diary.FoodItem
 import com.intake.intakevisor.ui.main.feedback.ReportDaysRange
 import com.intake.intakevisor.ui.main.feedback.api.model.InputReportData
+import com.intake.intakevisor.ui.welcome.UserData
 import com.squareup.moshi.Moshi
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -26,14 +27,18 @@ class BackendReportAPI : ReportAPI {
         .build()
     private val jsonAdapter = moshi.adapter(InputReportData::class.java)
 
+    var userData = UserData()
+
     override suspend fun fetchReport(range: ReportDaysRange, context: Context): Bitmap {
+        loadUserData(context)
+
         diaryDatabaseHelper = DiaryDatabaseHelper(context)
 
         val foodItems = getNutritionInfoFromDatabase(range)
 
         Log.d("BackendReportAPI", "Food items: $foodItems")
 
-        val reportData = InputReportData.of(foodItems)
+        val reportData = InputReportData.of(foodItems, userData)
         val jsonString = jsonAdapter.toJson(reportData)
 
         val response: Response<ResponseBody> = api.sendReport(jsonString)
@@ -51,5 +56,16 @@ class BackendReportAPI : ReportAPI {
 
     private fun convertResponseToBitmap(inputStream: InputStream): Bitmap {
         return BitmapFactory.decodeStream(inputStream)
+    }
+
+    private fun loadUserData(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
+
+        userData.gender = sharedPreferences.getString("gender", userData.gender)!!
+        userData.weight = sharedPreferences.getInt("weight", userData.weight)
+        userData.height = sharedPreferences.getInt("height", userData.height)
+        userData.age = sharedPreferences.getInt("age", userData.age)
+        userData.goalWeight = sharedPreferences.getInt("goalWeight", userData.goalWeight)
+        userData.birthDate = sharedPreferences.getString("birthDate", userData.birthDate)!!
     }
 }

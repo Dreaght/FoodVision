@@ -12,73 +12,73 @@ import kotlinx.serialization.Serializable
 @JsonClass(generateAdapter = true)
 data class NutritionInfo(
     val name: String = "Apple",
-    val calories: Int = 0,
-    val transFat: Int = 0,
-    val saturatedFat: Int = 0,
-    val totalFat: Int = 0,
-    val protein: Int = 0,
-    val sugar: Int = 0,
-    val cholesterol: Int = 0,
-    val sodium: Int = 0,
-    val calcium: Int = 0,
-    val iodine: Int = 0,
-    val iron: Int = 0,
-    val magnesium: Int = 0,
-    val potassium: Int = 0,
-    val zinc: Int = 0,
-    val vitaminA: Int = 0,
-    val vitaminC: Int = 0,
-    val vitaminD: Int = 0,
-    val vitaminE: Int = 0,
-    val vitaminK: Int = 0,
-    val vitaminB1: Int = 0,
-    val vitaminB2: Int = 0,
-    val vitaminB3: Int = 0,
-    val vitaminB5: Int = 0,
-    val vitaminB6: Int = 0,
-    val vitaminB7: Int = 0,
-    val vitaminB9: Int = 0,
-    val vitaminB12: Int = 0
+    val calories: Double = 0.0,
+    val transFat: Double = 0.0,
+    val saturatedFat: Double = 0.0,
+    val totalFat: Double = 0.0,
+    val protein: Double = 0.0,
+    val sugar: Double = 0.0,
+    val cholesterol: Double = 0.0,
+    val sodium: Double = 0.0,
+    val calcium: Double = 0.0,
+    val iodine: Double = 0.0,
+    val iron: Double = 0.0,
+    val magnesium: Double = 0.0,
+    val potassium: Double = 0.0,
+    val zinc: Double = 0.0,
+    val vitaminA: Double = 0.0,
+    val vitaminC: Double = 0.0,
+    val vitaminD: Double = 0.0,
+    val vitaminE: Double = 0.0,
+    val vitaminK: Double = 0.0,
+    val vitaminB1: Double = 0.0,
+    val vitaminB2: Double = 0.0,
+    val vitaminB3: Double = 0.0,
+    val vitaminB5: Double = 0.0,
+    val vitaminB6: Double = 0.0,
+    val vitaminB7: Double = 0.0,
+    val vitaminB9: Double = 0.0,
+    val vitaminB12: Double = 0.0
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
-        parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt(),
-        parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt(),
-        parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt(),
-        parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt(),
-        parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt(),
-        parcel.readInt(), parcel.readInt()
+        parcel.readDouble(), parcel.readDouble(), parcel.readDouble(), parcel.readDouble(), parcel.readDouble(),
+        parcel.readDouble(), parcel.readDouble(), parcel.readDouble(), parcel.readDouble(), parcel.readDouble(),
+        parcel.readDouble(), parcel.readDouble(), parcel.readDouble(), parcel.readDouble(), parcel.readDouble(),
+        parcel.readDouble(), parcel.readDouble(), parcel.readDouble(), parcel.readDouble(), parcel.readDouble(),
+        parcel.readDouble(), parcel.readDouble(), parcel.readDouble(), parcel.readDouble(), parcel.readDouble(),
+        parcel.readDouble(), parcel.readDouble()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
-        parcel.writeInt(calories)
-        parcel.writeInt(transFat)
-        parcel.writeInt(saturatedFat)
-        parcel.writeInt(totalFat)
-        parcel.writeInt(protein)
-        parcel.writeInt(sugar)
-        parcel.writeInt(cholesterol)
-        parcel.writeInt(sodium)
-        parcel.writeInt(calcium)
-        parcel.writeInt(iodine)
-        parcel.writeInt(iron)
-        parcel.writeInt(magnesium)
-        parcel.writeInt(potassium)
-        parcel.writeInt(zinc)
-        parcel.writeInt(vitaminA)
-        parcel.writeInt(vitaminC)
-        parcel.writeInt(vitaminD)
-        parcel.writeInt(vitaminE)
-        parcel.writeInt(vitaminK)
-        parcel.writeInt(vitaminB1)
-        parcel.writeInt(vitaminB2)
-        parcel.writeInt(vitaminB3)
-        parcel.writeInt(vitaminB5)
-        parcel.writeInt(vitaminB6)
-        parcel.writeInt(vitaminB7)
-        parcel.writeInt(vitaminB9)
-        parcel.writeInt(vitaminB12)
+        parcel.writeDouble(calories)
+        parcel.writeDouble(transFat)
+        parcel.writeDouble(saturatedFat)
+        parcel.writeDouble(totalFat)
+        parcel.writeDouble(protein)
+        parcel.writeDouble(sugar)
+        parcel.writeDouble(cholesterol)
+        parcel.writeDouble(sodium)
+        parcel.writeDouble(calcium)
+        parcel.writeDouble(iodine)
+        parcel.writeDouble(iron)
+        parcel.writeDouble(magnesium)
+        parcel.writeDouble(potassium)
+        parcel.writeDouble(zinc)
+        parcel.writeDouble(vitaminA)
+        parcel.writeDouble(vitaminC)
+        parcel.writeDouble(vitaminD)
+        parcel.writeDouble(vitaminE)
+        parcel.writeDouble(vitaminK)
+        parcel.writeDouble(vitaminB1)
+        parcel.writeDouble(vitaminB2)
+        parcel.writeDouble(vitaminB3)
+        parcel.writeDouble(vitaminB5)
+        parcel.writeDouble(vitaminB6)
+        parcel.writeDouble(vitaminB7)
+        parcel.writeDouble(vitaminB9)
+        parcel.writeDouble(vitaminB12)
     }
 
     override fun describeContents(): Int = 0
@@ -149,7 +149,7 @@ data class NutritionInfo(
         result = 31 * result + vitaminB9
         result = 31 * result + vitaminB12
         result = 31 * result + name.hashCode()
-        return result
+        return result.toInt()
     }
 
     companion object CREATOR : Parcelable.Creator<NutritionInfo> {

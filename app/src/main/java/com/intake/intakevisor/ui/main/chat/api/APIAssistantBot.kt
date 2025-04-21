@@ -6,6 +6,7 @@ import com.intake.intakevisor.ui.main.diary.DiaryDatabaseHelper
 import com.intake.intakevisor.ui.main.diary.FoodItem
 import com.intake.intakevisor.ui.main.feedback.ReportDaysRange
 import com.intake.intakevisor.ui.main.feedback.api.model.InputReportData
+import com.intake.intakevisor.ui.welcome.UserData
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
@@ -27,11 +28,15 @@ class APIAssistantBot : AssistantBot {
         .build()
     private val jsonAdapter = moshi.adapter(InputReportData::class.java)
 
+    var userData = UserData()
+
     override suspend fun getResponseFragments(
         message: String,
         context: Context,
         onFragmentReceived: (String) -> Unit
     ) {
+        loadUserData(context)
+
         diaryDatabaseHelper = DiaryDatabaseHelper(context)
 
         val todayLocalDate = LocalDate.now()
@@ -45,7 +50,7 @@ weekAgoCalendar.time = java.util.Date.from(weekAgoLocalDate.atStartOfDay(ZoneId.
 
         // Get the food items
         val foodItems = getNutritionInfoFromDatabase(ReportDaysRange(weekAgoCalendar, todayCalendar))
-        val reportData = InputReportData.of(foodItems)
+        val reportData = InputReportData.of(foodItems, userData)
         val jsonString = jsonAdapter.toJson(reportData)
 
         // Send the request
@@ -70,5 +75,16 @@ weekAgoCalendar.time = java.util.Date.from(weekAgoLocalDate.atStartOfDay(ZoneId.
 
     private suspend fun getNutritionInfoFromDatabase(range: ReportDaysRange): List<Map<String, List<FoodItem>>> {
         return diaryDatabaseHelper.getMealsForDaysRange(range)
+    }
+
+    private fun loadUserData(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
+
+        userData.gender = sharedPreferences.getString("gender", userData.gender)!!
+        userData.weight = sharedPreferences.getInt("weight", userData.weight)
+        userData.height = sharedPreferences.getInt("height", userData.height)
+        userData.age = sharedPreferences.getInt("age", userData.age)
+        userData.goalWeight = sharedPreferences.getInt("goalWeight", userData.goalWeight)
+        userData.birthDate = sharedPreferences.getString("birthDate", userData.birthDate)!!
     }
 }

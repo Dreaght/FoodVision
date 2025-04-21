@@ -32,7 +32,7 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("boolean", "ROOM_SCHEMA_EXPORT", "true")
-            buildConfigField("String", "BASE_URL", "\"http://45.93.136.230:8080/\"")
+            buildConfigField("String", "BASE_URL", "\"http://45.93.136.230:8081/\"")
         }
         debug {
             isMinifyEnabled = false
@@ -41,7 +41,7 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("boolean", "ROOM_SCHEMA_EXPORT", "false")
-            buildConfigField("String", "BASE_URL", "\"http://45.93.136.230:8080/\"")
+            buildConfigField("String", "BASE_URL", "\"http://45.93.136.230:8081/\"")
         }
 
     }

@@ -33,15 +33,18 @@ class APIFoodProcessor(frame: Frame) : FoodDetector {
 
                 // Convert to FoodRegion while cropping actual image fragments
                 detectedRegions.map { region ->
-                    val croppedBitmap = Bitmap.createBitmap(
-                        image,
-                        region.start.X,
-                        region.start.Y,
-                        region.end.X - region.start.X,
-                        region.end.Y - region.start.Y
-                    )
+                    val left = (region.start.X * image.width).toInt()
+                    val top = (region.start.Y * image.height).toInt()
+                    val right = (region.end.X * image.width).toInt()
+                    val bottom = (region.end.Y * image.height).toInt()
+
+                    val width = right - left
+                    val height = bottom - top
+
+                    val croppedBitmap = Bitmap.createBitmap(image, left, top, width, height)
+
                     FoodRegion(
-                        Rect(region.start.X, region.start.Y, region.end.X, region.end.Y),
+                        Rect(left, top, right, bottom),
                         croppedBitmap,
                         region.nutrition
                     )

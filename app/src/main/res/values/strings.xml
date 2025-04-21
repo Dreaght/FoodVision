@@ -37,5 +37,5 @@
     <string name="previous_month_label">&lt;</string>
     <string name="next_month_label">&gt;</string>
     <string name="download_report_btn">Download</string>
-    <string name="nutrition_info">%s. Calories: %d</string>
+    <string name="nutrition_info">%s. Calories: %.2f</string>
 </resources>

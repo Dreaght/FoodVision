@@ -25,7 +25,7 @@ class DummyFoodProcessor(frame: Frame) : FoodDetector {
         // Extract fragments from the frame based on the regions
         val foodRegions = regions.map { rect ->
             val fragment = cropBitmap(image, rect)
-            FoodRegion(rect, fragment, NutritionInfo("Sample Food", 100))
+            FoodRegion(rect, fragment, NutritionInfo("Sample Food", 100.0))
         }
 
         delay(1000)
