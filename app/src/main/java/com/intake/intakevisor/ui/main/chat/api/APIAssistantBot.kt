@@ -1,6 +1,7 @@
 package com.intake.intakevisor.ui.main.chat.api
 
 import android.content.Context
+import android.util.Log
 import com.intake.intakevisor.api.RetrofitClient
 import com.intake.intakevisor.ui.main.diary.DiaryDatabaseHelper
 import com.intake.intakevisor.ui.main.diary.FoodItem
@@ -26,7 +27,7 @@ class APIAssistantBot : AssistantBot {
     private val moshi = Moshi.Builder()
         .add(com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory())
         .build()
-    private val jsonAdapter = moshi.adapter(InputReportData::class.java)
+    private val jsonAdapter = moshi.adapter(ChatInputData::class.java)
 
     var userData = UserData()
 
@@ -50,13 +51,13 @@ weekAgoCalendar.time = java.util.Date.from(weekAgoLocalDate.atStartOfDay(ZoneId.
 
         // Get the food items
         val foodItems = getNutritionInfoFromDatabase(ReportDaysRange(weekAgoCalendar, todayCalendar))
-        val reportData = InputReportData.of(foodItems, userData)
+        val reportData = ChatInputData(message, InputReportData.of(foodItems, userData).data, userData)
         val jsonString = jsonAdapter.toJson(reportData)
 
         // Send the request
-        val responseBody: ResponseBody = api.sendMessage("""
-            {"message": $message, "data": $jsonString}
-        """.trimIndent())
+        val responseBody: ResponseBody = api.sendMessage(jsonString.trimIndent())
+
+        Log.d("APIAssistantBot", "Response body: $responseBody")
 
         flow {
             val reader = BufferedReader(InputStreamReader(responseBody.byteStream()))
